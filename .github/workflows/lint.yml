@@ -8,11 +8,10 @@ jobs:
   lint:
     strategy:
       matrix:
-        os: ubuntu-latest
         go: ['1.13', '1.14']
 
-    name: Lint on ${{ matrix.os }} with Go ${{ matrix.go }}
-    runs-on: ${{ matrix.os }}
+    name: Lint with Go ${{ matrix.go }}
+    runs-on: ubuntu-latest
 
     steps:
     - name: Set up Go ${{ matrix.go }}
