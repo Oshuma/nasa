@@ -4,7 +4,7 @@ Go package for [NASA Open APIs](https://api.nasa.gov/).
 
 ### APIs Implemented
 
-- [ ] **APOD**: Astronomy Picture of the Day
+- [x] **APOD**: Astronomy Picture of the Day
 - [ ] **Asteroids NeoWs**: Near Earth Object Web Service
 - [ ] **DONKI**: Space Weather Database of Notifications, Knowledge, Information
 - [ ] **Earth**: Unlock the significant public investment in earth observation data
