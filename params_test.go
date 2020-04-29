@@ -38,11 +38,11 @@ func TestEncode(t *testing.T) {
 		})
 
 		t.Run("all set", func(t *testing.T) {
-			api_key := "FOO_KEY"
+			apiKey := "FOO_KEY"
 			d := time.Now()
 
 			p := APODParams{
-				APIKey: api_key,
+				APIKey: apiKey,
 				Date:   d,
 				HD:     true,
 			}
@@ -52,7 +52,7 @@ func TestEncode(t *testing.T) {
 				t.Error(err)
 			}
 
-			expected := fmt.Sprintf("api_key=%s&date=%s&hd=true", api_key, d.Format("2006-01-02"))
+			expected := fmt.Sprintf("api_key=%s&date=%s&hd=true", apiKey, d.Format("2006-01-02"))
 			if out != expected {
 				t.Errorf("expected: %s, got %s", expected, out)
 			}
