@@ -18,9 +18,10 @@ type APODParams struct {
 func (p *APODParams) Encode() (string, error) {
 	v := url.Values{}
 
-	if p.APIKey != "" {
-		v.Set("api_key", p.APIKey)
+	if p.APIKey == "" {
+		return "", ErrorNoAPIKey
 	}
+	v.Set("api_key", p.APIKey)
 
 	if !p.Date.IsZero() {
 		v.Set("date", p.Date.Format("2006-01-02"))
