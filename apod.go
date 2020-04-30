@@ -9,14 +9,14 @@ import (
 const apodAPIURL = "https://api.nasa.gov/planetary/apod"
 
 type APODImage struct {
-	Date           Date   `json:"date"`
-	Title          string `json:"title"`
-	URL            string `json:"url"`
-	HDURL          string `json:"hdurl"`
-	Explanation    string `json:"explanation"`
-	MediaType      string `json:"media_type"`
-	Copyright      string `json:"copyright"`
-	ServiceVersion string `json:"service_version"`
+	Date           APODDate `json:"date"`
+	Title          string   `json:"title"`
+	URL            string   `json:"url"`
+	HDURL          string   `json:"hdurl"`
+	Explanation    string   `json:"explanation"`
+	MediaType      string   `json:"media_type"`
+	Copyright      string   `json:"copyright"`
+	ServiceVersion string   `json:"service_version"`
 }
 
 func APOD(p ParamEncoder) (APODImage, error) {

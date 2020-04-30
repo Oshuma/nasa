@@ -9,7 +9,7 @@ Go package for [NASA Open APIs](https://api.nasa.gov/).
 - [ ] **DONKI**: Space Weather Database of Notifications, Knowledge, Information
 - [ ] **Earth**: Unlock the significant public investment in earth observation data
 - [ ] **EONET**: The Earth Observatory Natural Event Tracker
-- [ ] **EPIC**: Earth Polychromatic Imaging Camera
+- [x] **EPIC**: Earth Polychromatic Imaging Camera
 - [ ] **Exoplanet**: Programmatic access to NASA's Exoplanet Archive database
 - [ ] **GeneLab**: Programmatic interface for GeneLab's public data repository website
 - [ ] **Insight**: Mars Weather Service API
