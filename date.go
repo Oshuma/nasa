@@ -5,16 +5,16 @@ import (
 	"time"
 )
 
-type APODDate struct {
+type Date struct {
 	time.Time
 }
 
-func (d *APODDate) UnmarshalJSON(b []byte) error {
+func (d *Date) UnmarshalJSON(b []byte) error {
 	t, err := parseTime(b, "2006-01-02")
 	if err != nil {
 		return err
 	}
-	*d = APODDate{Time: t}
+	*d = Date{Time: t}
 	return nil
 }
 

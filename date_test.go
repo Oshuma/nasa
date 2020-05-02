@@ -7,9 +7,9 @@ import (
 )
 
 func TestUnmarshalJSON(t *testing.T) {
-	t.Run("APODDate", func(t *testing.T) {
+	t.Run("Date", func(t *testing.T) {
 		in := []byte(`""2020-04-29""`)
-		d := &APODDate{}
+		d := &Date{}
 		err := d.UnmarshalJSON(in)
 		if err != nil {
 			t.Error(err)
