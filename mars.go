@@ -9,7 +9,7 @@ import (
 
 const (
 	marsPhotosAPIURL          = "https://api.nasa.gov/mars-photos/api/v1/rovers/%s/photos"
-	marsPhotosManifestsAPIURL = "https://api.nasa.gov/mars-photos/api/v1/manifests"
+	marsPhotosManifestsAPIURL = "https://api.nasa.gov/mars-photos/api/v1/manifests/%s?api_key=%s"
 )
 
 // RoverPhoto represents a single photo from a rover camera.
@@ -94,6 +94,55 @@ func MarsRoverPhotos(p ParamEncoder, rover Rover) (RoverPhotos, error) {
 	photos.Page = page
 
 	return photos, nil
+}
+
+// MissionManifest represents rover mission details.
+type MissionManifest struct {
+	Name        string `json:"name"`
+	LandingDate Date   `json:"landing_date"`
+	LaunchDate  Date   `json:"launch_date"`
+	Status      string `json:"status"`
+	MaxSol      int    `json:"max_sol"`
+	MaxDate     Date   `json:"max_date"`
+	TotalPhotos int    `json:"total_photos"`
+	Photos      []struct {
+		Sol         int      `json:"sol"`
+		EarthDate   Date     `json:"earth_date"`
+		TotalPhotos int      `json:"total_photos"`
+		Cameras     []string `json:"cameras"`
+	} `json:"photos"`
+}
+
+type manifestResponse struct {
+	Manifest MissionManifest `json:"photo_manifest"`
+}
+
+// MarsMissionManifest returns the rover mission details.
+func MarsMissionManifest(apiKey string, rover Rover) (MissionManifest, error) {
+	url := fmt.Sprintf(marsPhotosManifestsAPIURL, rover.Slug, apiKey)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return MissionManifest{}, err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return MissionManifest{}, err
+	}
+
+	content, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return MissionManifest{}, err
+	}
+	defer resp.Body.Close()
+
+	r := manifestResponse{}
+	err = json.Unmarshal(content, &r)
+	if err != nil {
+		return MissionManifest{}, err
+	}
+
+	return r.Manifest, nil
 }
 
 func hasCamera(rover Rover, camera RoverCamera) bool {
