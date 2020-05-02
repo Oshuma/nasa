@@ -9,8 +9,30 @@ import (
 
 // ParamEncoder is the interface passed to most API methods.
 type ParamEncoder interface {
+	// TODO: Can probably do away with this and just cast when needed.
 	GetAPIKey() string
 	Encode() (string, error)
+}
+
+// APIParam is used when only an APIKey is needed.
+type APIParam struct {
+	APIKey string
+}
+
+func (p *APIParam) GetAPIKey() string {
+	return p.APIKey
+}
+
+// Encode returns a string representation for the given API type.
+func (p *APIParam) Encode() (string, error) {
+	v := url.Values{}
+
+	if p.APIKey == "" {
+		return "", ErrorNoAPIKey
+	}
+	v.Set("api_key", p.APIKey)
+
+	return v.Encode(), nil
 }
 
 // APODParams wraps the APOD API params.

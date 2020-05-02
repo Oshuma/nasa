@@ -7,7 +7,8 @@ import (
 
 const (
 	marsPhotosAPIURL          = "https://api.nasa.gov/mars-photos/api/v1/rovers/%s/photos"
-	marsPhotosManifestsAPIURL = "https://api.nasa.gov/mars-photos/api/v1/manifests/%s?api_key=%s"
+	marsLatestPhotosAPIURL    = "https://api.nasa.gov/mars-photos/api/v1/rovers/%s/latest_photos"
+	marsPhotosManifestsAPIURL = "https://api.nasa.gov/mars-photos/api/v1/manifests/%s"
 )
 
 // RoverPhoto represents a single photo from a rover camera.
@@ -52,8 +53,10 @@ func MarsRoverPhotos(p ParamEncoder, rover Rover) (RoverPhotos, error) {
 	}
 
 	camera := params.Camera
-	if !hasCamera(rover, camera) {
-		return RoverPhotos{}, &ErrorRoverCameraMissing{rover, camera}
+	if camera.Slug != "" {
+		if !hasCamera(rover, camera) {
+			return RoverPhotos{}, &ErrorRoverCameraMissing{rover, camera}
+		}
 	}
 
 	url := fmt.Sprintf(marsPhotosAPIURL, rover.Slug)
@@ -75,6 +78,27 @@ func MarsRoverPhotos(p ParamEncoder, rover Rover) (RoverPhotos, error) {
 	photos.Page = page
 
 	return photos, nil
+}
+
+type latestPhotosResponse struct {
+	Photos []*RoverPhoto `json:"latest_photos"`
+}
+
+// MarsRoverPhotosLatest returns the most recent Sol for which photos exist.
+func MarsRoverPhotosLatest(p ParamEncoder, rover Rover) ([]*RoverPhoto, error) {
+	url := fmt.Sprintf(marsLatestPhotosAPIURL, rover.Slug)
+	content, err := getContent(url, p)
+	if err != nil {
+		return []*RoverPhoto{}, err
+	}
+
+	r := latestPhotosResponse{}
+	err = json.Unmarshal(content, &r)
+	if err != nil {
+		return []*RoverPhoto{}, err
+	}
+
+	return r.Photos, nil
 }
 
 // MissionManifest represents rover mission details.
@@ -99,9 +123,9 @@ type manifestResponse struct {
 }
 
 // MarsMissionManifest returns the rover mission details.
-func MarsMissionManifest(apiKey string, rover Rover) (MissionManifest, error) {
-	url := fmt.Sprintf(marsPhotosManifestsAPIURL, rover.Slug, apiKey)
-	content, err := getContent(url, nil)
+func MarsMissionManifest(p ParamEncoder, rover Rover) (MissionManifest, error) {
+	url := fmt.Sprintf(marsPhotosManifestsAPIURL, rover.Slug)
+	content, err := getContent(url, p)
 	if err != nil {
 		return MissionManifest{}, err
 	}

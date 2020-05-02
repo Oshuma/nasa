@@ -10,6 +10,31 @@ import (
 func TestEncode(t *testing.T) {
 	apiKey := "NASA_KEY"
 
+	t.Run("APIParam", func(t *testing.T) {
+		t.Run("no APIKey", func(t *testing.T) {
+			p := &APIParam{}
+
+			_, err := p.Encode()
+			if err != ErrorNoAPIKey {
+				t.Errorf("wrong error returned: %s", err)
+			}
+		})
+
+		t.Run("encoded", func(t *testing.T) {
+			p := APIParam{APIKey: apiKey}
+
+			out, err := p.Encode()
+			if err != nil {
+				t.Error(err)
+			}
+
+			expected := fmt.Sprintf("api_key=%s", apiKey)
+			if out != expected {
+				t.Errorf("expected: %s, got: %s", expected, out)
+			}
+		})
+	})
+
 	t.Run("APODParams", func(t *testing.T) {
 		t.Run("no APIKey", func(t *testing.T) {
 			p := &APODParams{}

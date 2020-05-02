@@ -13,7 +13,7 @@ Go package for [NASA Open APIs](https://api.nasa.gov/).
 - [ ] **Exoplanet**: Programmatic access to NASA's Exoplanet Archive database
 - [ ] **GeneLab**: Programmatic interface for GeneLab's public data repository website
 - [ ] **Insight**: Mars Weather Service API
-- [ ] **Mars Rover Photos**: Image data gathered by NASA's Curiosity, Opportunity, and Spirit rovers on Mars
+- [x] **Mars Rover Photos**: Image data gathered by NASA's Curiosity, Opportunity, and Spirit rovers on Mars
 - [ ] **NASA Image and Video Library**: API to access the NASA Image and Video Library site at images.nasa.gov
 - [ ] **TechTransfer**: Patents, Software, and Tech Transfer Reports
 - [ ] **Satallite Situation Center**: System to cast geocentric spacecraft location information into a framework of (empirical) geophysical regions
