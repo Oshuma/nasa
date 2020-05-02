@@ -3,8 +3,6 @@ package nasa
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 )
 
 const (
@@ -59,27 +57,10 @@ func MarsRoverPhotos(p ParamEncoder, rover Rover) (RoverPhotos, error) {
 	}
 
 	url := fmt.Sprintf(marsPhotosAPIURL, rover.Slug)
-	req, err := http.NewRequest("GET", url, nil)
+	content, err := getContent(url, p)
 	if err != nil {
 		return RoverPhotos{}, err
 	}
-
-	query, err := p.Encode()
-	if err != nil {
-		return RoverPhotos{}, err
-	}
-	req.URL.RawQuery = query
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return RoverPhotos{}, err
-	}
-
-	content, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return RoverPhotos{}, err
-	}
-	defer resp.Body.Close()
 
 	photos := RoverPhotos{}
 	err = json.Unmarshal(content, &photos)
@@ -120,21 +101,10 @@ type manifestResponse struct {
 // MarsMissionManifest returns the rover mission details.
 func MarsMissionManifest(apiKey string, rover Rover) (MissionManifest, error) {
 	url := fmt.Sprintf(marsPhotosManifestsAPIURL, rover.Slug, apiKey)
-	req, err := http.NewRequest("GET", url, nil)
+	content, err := getContent(url, nil)
 	if err != nil {
 		return MissionManifest{}, err
 	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return MissionManifest{}, err
-	}
-
-	content, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return MissionManifest{}, err
-	}
-	defer resp.Body.Close()
 
 	r := manifestResponse{}
 	err = json.Unmarshal(content, &r)

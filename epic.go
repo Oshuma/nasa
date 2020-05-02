@@ -3,8 +3,6 @@ package nasa
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"strings"
 )
 
@@ -45,22 +43,10 @@ func EPIC(p ParamEncoder) (EPICImages, error) {
 	}
 
 	url := fmt.Sprintf("%s/%s", epicAPIURL, query)
-
-	req, err := http.NewRequest("GET", url, nil)
+	content, err := getContent(url, nil)
 	if err != nil {
 		return EPICImages{}, err
 	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return EPICImages{}, err
-	}
-
-	content, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return EPICImages{}, err
-	}
-	defer resp.Body.Close()
 
 	images := EPICImages{}
 	err = json.Unmarshal(content, &images)
