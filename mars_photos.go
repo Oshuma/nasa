@@ -12,40 +12,6 @@ const (
 	marsPhotosManifestsAPIURL = "https://api.nasa.gov/mars-photos/api/v1/manifests"
 )
 
-// Rover represents a Mars rover.
-type Rover string
-
-// Defines Rovers to be used in the API request.
-var (
-	RoverCuriosity   Rover = "curiosity"
-	RoverOpportunity Rover = "opportunity"
-	RoverSpirit      Rover = "spirit"
-)
-
-// RoverCamera represents a rover camera type.
-type RoverCamera string
-
-var (
-	// RoverCameraFHAZ is the Front Hazard Avoidance Camera
-	RoverCameraFHAZ RoverCamera = "fhaz"
-	// RoverCameraRHAZ is the Rear Hazard Avoidance Camera
-	RoverCameraRHAZ RoverCamera = "rhaz"
-	// RoverCameraMAST is the Mast Camera
-	RoverCameraMAST RoverCamera = "mast"
-	// RoverCameraCHEMCAM is the Chemistry and Camera Complex
-	RoverCameraCHEMCAM RoverCamera = "chemcam"
-	// RoverCameraMAHLI is the Mars Hand Lens Imager
-	RoverCameraMAHLI RoverCamera = "mahli"
-	// RoverCameraMARDI is the Mars Descent Imager
-	RoverCameraMARDI RoverCamera = "mardi"
-	// RoverCameraNAVCAM is the Navigation Camera
-	RoverCameraNAVCAM RoverCamera = "navcam"
-	// RoverCameraPANCAM is the Panoramic Camera
-	RoverCameraPANCAM RoverCamera = "pancam"
-	// RoverCameraMINITES is the Miniature Thermal Emission Spectrometer (Mini-TES)
-	RoverCameraMINITES RoverCamera = "minites"
-)
-
 // RoverPhoto represents a single photo from a rover camera.
 type RoverPhoto struct {
 	ID        int    `json:"id"`
@@ -82,7 +48,17 @@ type RoverPhotos struct {
 
 // MarsRoverPhotos returns photos for the given params and Rover.
 func MarsRoverPhotos(p ParamEncoder, rover Rover) (RoverPhotos, error) {
-	url := fmt.Sprintf(marsPhotosAPIURL, rover)
+	params, ok := p.(*MarsPhotosParams)
+	if !ok {
+		return RoverPhotos{}, ErrorParamsMismatch
+	}
+
+	camera := params.Camera
+	if !hasCamera(rover, camera) {
+		return RoverPhotos{}, &ErrorRoverCameraMissing{rover, camera}
+	}
+
+	url := fmt.Sprintf(marsPhotosAPIURL, rover.Slug)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return RoverPhotos{}, err
@@ -111,11 +87,20 @@ func MarsRoverPhotos(p ParamEncoder, rover Rover) (RoverPhotos, error) {
 		return RoverPhotos{}, err
 	}
 
-	page := p.(*MarsPhotosParams).Page
-	if page <= 0 {
-		page = 1
+	page := 1
+	if params.Page > 1 {
+		page = params.Page
 	}
 	photos.Page = page
 
 	return photos, nil
+}
+
+func hasCamera(rover Rover, camera RoverCamera) bool {
+	for _, c := range rover.Cameras {
+		if c == camera {
+			return true
+		}
+	}
+	return false
 }

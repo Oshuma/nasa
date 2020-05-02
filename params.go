@@ -102,8 +102,8 @@ func (p *MarsPhotosParams) Encode() (string, error) {
 		v.Set("sol", strconv.Itoa(p.Sol))
 	}
 
-	if p.Camera != "" {
-		v.Set("camera", string(p.Camera))
+	if p.Camera.Slug != "" {
+		v.Set("camera", p.Camera.Slug)
 	}
 
 	if p.Page > 0 {

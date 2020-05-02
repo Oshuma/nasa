@@ -139,6 +139,37 @@ func TestEncode(t *testing.T) {
 				t.Errorf("\nexpected: %s\ngot: %s", expected, out)
 			}
 		})
+
+		t.Run("EarthDate", func(t *testing.T) {
+			d := time.Now()
+			p := &MarsPhotosParams{APIKey: apiKey, EarthDate: d}
+
+			out, err := p.Encode()
+			if err != nil {
+				t.Error(err)
+			}
+
+			earthDate := d.Format("2006-01-02")
+			expected := fmt.Sprintf("api_key=%s&earth_date=%s", apiKey, earthDate)
+			if out != expected {
+				t.Errorf("\nexpected: %s\ngot: %s", expected, out)
+			}
+		})
+
+		t.Run("Camera", func(t *testing.T) {
+			cam := RoverCameraFHAZ
+			p := &MarsPhotosParams{APIKey: apiKey, Camera: cam}
+
+			out, err := p.Encode()
+			if err != nil {
+				t.Error(err)
+			}
+
+			expected := fmt.Sprintf("api_key=%s&camera=%s&sol=0", apiKey, cam.Slug)
+			if out != expected {
+				t.Errorf("\nexpected: %s\ngot: %s", expected, out)
+			}
+		})
 	})
 }
 
