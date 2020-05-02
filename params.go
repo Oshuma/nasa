@@ -19,6 +19,7 @@ type APIParam struct {
 	APIKey string
 }
 
+// GetAPIKey returns the APIKey.
 func (p *APIParam) GetAPIKey() string {
 	return p.APIKey
 }
