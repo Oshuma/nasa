@@ -13,6 +13,7 @@ const (
 	epicImageURLFormat = "%s/archive/%s/%s/%s/%s/%s/%s.%s?api_key=%s"
 )
 
+// EPICImage represents an image from the Earth Polychromatic Imaging Camera.
 type EPICImage struct {
 	Date       EPICDate `json:"date"`
 	Identifier string   `json:"identifier"`
@@ -36,6 +37,7 @@ type EPICImage struct {
 	} `json:"-"`
 }
 
+// EPIC gets a response from the Earth Polychromatic Imaging Camera.
 func EPIC(p ParamEncoder) (EPICImages, error) {
 	query, err := p.Encode()
 	if err != nil {
@@ -71,6 +73,7 @@ func EPIC(p ParamEncoder) (EPICImages, error) {
 	return images, nil
 }
 
+// EPICImages is an array of pointers to EPICImage.
 type EPICImages []*EPICImage
 
 func (images EPICImages) buildURLs(p ParamEncoder) {

@@ -1,10 +1,12 @@
 package nasa
 
+// LatLon represents latitude/longitude coordinates.
 type LatLon struct {
 	Lat float64 `json:"lat"`
 	Lon float64 `json:"lon"`
 }
 
+// Quaternions represents quadrant coordinates.
 type Quaternions struct {
 	Q0 float64 `json:"q0"`
 	Q1 float64 `json:"q1"`
@@ -12,6 +14,7 @@ type Quaternions struct {
 	Q3 float64 `json:"q3"`
 }
 
+// XYZ represents coordinates in 3D space.
 type XYZ struct {
 	X float64 `json:"x"`
 	Y float64 `json:"y"`

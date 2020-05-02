@@ -8,6 +8,7 @@ import (
 
 const apodAPIURL = "https://api.nasa.gov/planetary/apod"
 
+// APODImage represents an Astronomy Picture Of the Day.
 type APODImage struct {
 	Date           Date   `json:"date"`
 	Title          string `json:"title"`
@@ -19,6 +20,7 @@ type APODImage struct {
 	ServiceVersion string `json:"service_version"`
 }
 
+// APOD returns the Astronomy Picture Of the Day.
 func APOD(p ParamEncoder) (APODImage, error) {
 	req, err := http.NewRequest("GET", apodAPIURL, nil)
 	if err != nil {

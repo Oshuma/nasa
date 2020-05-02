@@ -74,11 +74,13 @@ type RoverPhoto struct {
 	} `json:"rover"`
 }
 
+// RoverPhotos wraps an array of pointers of RoverPhoto.
 type RoverPhotos struct {
 	Photos []*RoverPhoto `json:"photos"`
 	Page   int
 }
 
+// MarsRoverPhotos returns photos for the given params and Rover.
 func MarsRoverPhotos(p ParamEncoder, rover Rover) (RoverPhotos, error) {
 	url := fmt.Sprintf(marsPhotosAPIURL, rover)
 	req, err := http.NewRequest("GET", url, nil)
