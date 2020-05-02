@@ -115,6 +115,31 @@ func TestEncode(t *testing.T) {
 			}
 		})
 	})
+
+	t.Run("MarsPhotosParams", func(t *testing.T) {
+		t.Run("no APIKey", func(t *testing.T) {
+			p := &MarsPhotosParams{}
+
+			_, err := p.Encode()
+			if err != ErrorNoAPIKey {
+				t.Errorf("wrong error returned: %s", err)
+			}
+		})
+
+		t.Run("defaults", func(t *testing.T) {
+			p := &MarsPhotosParams{APIKey: apiKey}
+
+			out, err := p.Encode()
+			if err != nil {
+				t.Error(err)
+			}
+
+			expected := fmt.Sprintf("api_key=%s&sol=0", apiKey)
+			if out != expected {
+				t.Errorf("\nexpected: %s\ngot: %s", expected, out)
+			}
+		})
+	})
 }
 
 func TestGetAPIKey(t *testing.T) {
@@ -130,6 +155,14 @@ func TestGetAPIKey(t *testing.T) {
 
 	t.Run("EPICParams", func(t *testing.T) {
 		p := &EPICParams{APIKey: apiKey}
+		out := p.GetAPIKey()
+		if out != apiKey {
+			t.Errorf("expected: %s, got: %s", apiKey, out)
+		}
+	})
+
+	t.Run("MarsPhotosParams", func(t *testing.T) {
+		p := &MarsPhotosParams{APIKey: apiKey}
 		out := p.GetAPIKey()
 		if out != apiKey {
 			t.Errorf("expected: %s, got: %s", apiKey, out)
