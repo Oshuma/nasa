@@ -10,7 +10,7 @@ jobs:
       matrix:
         go: ['1.13', '1.14']
 
-    name: Lint with Go ${{ matrix.go }}
+    name: Lint | Go ${{ matrix.go }}
     runs-on: ubuntu-latest
 
     steps:

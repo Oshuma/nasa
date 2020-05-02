@@ -11,7 +11,7 @@ jobs:
         os: [ubuntu-latest, ubuntu-18.04, macos-latest, windows-latest]
         go: ['1.13', '1.14']
 
-    name: Test on ${{ matrix.os }} with Go ${{ matrix.go }}
+    name: ${{ matrix.os }} | Go ${{ matrix.go }}
     runs-on: ${{ matrix.os }}
 
     steps:
