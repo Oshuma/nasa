@@ -197,31 +197,3 @@ func TestEncode(t *testing.T) {
 		})
 	})
 }
-
-func TestGetAPIKey(t *testing.T) {
-	apiKey := "NASA_KEY"
-
-	t.Run("APODParams", func(t *testing.T) {
-		p := &APODParams{APIKey: apiKey}
-		out := p.GetAPIKey()
-		if out != apiKey {
-			t.Errorf("expected: %s, got: %s", apiKey, out)
-		}
-	})
-
-	t.Run("EPICParams", func(t *testing.T) {
-		p := &EPICParams{APIKey: apiKey}
-		out := p.GetAPIKey()
-		if out != apiKey {
-			t.Errorf("expected: %s, got: %s", apiKey, out)
-		}
-	})
-
-	t.Run("MarsPhotosParams", func(t *testing.T) {
-		p := &MarsPhotosParams{APIKey: apiKey}
-		out := p.GetAPIKey()
-		if out != apiKey {
-			t.Errorf("expected: %s, got: %s", apiKey, out)
-		}
-	})
-}

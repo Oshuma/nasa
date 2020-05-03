@@ -9,19 +9,12 @@ import (
 
 // ParamEncoder is the interface passed to most API methods.
 type ParamEncoder interface {
-	// TODO: Can probably do away with this and just cast when needed.
-	GetAPIKey() string
 	Encode() (string, error)
 }
 
 // APIParam is used when only an APIKey is needed.
 type APIParam struct {
 	APIKey string
-}
-
-// GetAPIKey returns the APIKey.
-func (p *APIParam) GetAPIKey() string {
-	return p.APIKey
 }
 
 // Encode returns a string representation for the given API type.
@@ -41,11 +34,6 @@ type APODParams struct {
 	APIKey string
 	Date   time.Time
 	HD     bool
-}
-
-// GetAPIKey returns the APIKey.
-func (p *APODParams) GetAPIKey() string {
-	return p.APIKey
 }
 
 // Encode returns a string representation for the given API type.
@@ -74,11 +62,6 @@ type EPICParams struct {
 	Date   time.Time
 }
 
-// GetAPIKey returns the APIKey.
-func (p *EPICParams) GetAPIKey() string {
-	return p.APIKey
-}
-
 // Encode returns a string representation for the given API type.
 func (p *EPICParams) Encode() (string, error) {
 	if p.APIKey == "" {
@@ -103,11 +86,6 @@ type MarsPhotosParams struct {
 	EarthDate time.Time
 	Camera    RoverCamera
 	Page      int
-}
-
-// GetAPIKey returns the APIKey.
-func (p *MarsPhotosParams) GetAPIKey() string {
-	return p.APIKey
 }
 
 // Encode returns a string representation for the given API type.
