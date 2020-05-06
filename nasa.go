@@ -5,6 +5,9 @@ import (
 	"net/http"
 )
 
+// Version is the package version.
+const Version = "0.1.0"
+
 // LatLon represents latitude/longitude coordinates.
 type LatLon struct {
 	Lat float64 `json:"lat"`
