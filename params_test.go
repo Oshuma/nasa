@@ -196,4 +196,15 @@ func TestEncode(t *testing.T) {
 			}
 		})
 	})
+
+	t.Run("MediaParams", func(t *testing.T) {
+		t.Run("require Query", func(t *testing.T) {
+			p := &MediaParams{}
+
+			_, err := p.Encode()
+			if err != ErrorNoQuery {
+				t.Errorf("wrong error returned: %s", err)
+			}
+		})
+	})
 }

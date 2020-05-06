@@ -113,3 +113,85 @@ func (p *MarsPhotosParams) Encode() (string, error) {
 
 	return v.Encode(), nil
 }
+
+// MediaParams wraps the Image and Video Library (media) params.
+type MediaParams struct {
+	Query            string
+	Center           string
+	Description      string
+	Description508   string
+	Keywords         string
+	Location         string
+	MediaType        string
+	NasaID           string
+	Page             int
+	Photographer     string
+	SecondaryCreator string
+	Title            string
+	YearStart        string
+	YearEnd          string
+}
+
+// Encode returns a string representation for the given API type.
+func (p *MediaParams) Encode() (string, error) {
+	v := url.Values{}
+
+	if p.Query == "" {
+		return "", ErrorNoQuery
+	}
+	v.Set("q", p.Query)
+
+	if p.Center != "" {
+		v.Set("center", p.Center)
+	}
+
+	if p.Description != "" {
+		v.Set("description", p.Description)
+	}
+
+	if p.Description508 != "" {
+		v.Set("description_508", p.Description508)
+	}
+
+	if p.Keywords != "" {
+		v.Set("keywords", p.Keywords)
+	}
+
+	if p.Location != "" {
+		v.Set("location", p.Location)
+	}
+
+	if p.MediaType != "" {
+		v.Set("media_type", p.MediaType)
+	}
+
+	if p.NasaID != "" {
+		v.Set("nasa_id", p.NasaID)
+	}
+
+	if p.Page > 0 {
+		v.Set("page", strconv.Itoa(p.Page))
+	}
+
+	if p.Photographer != "" {
+		v.Set("photographer", p.Photographer)
+	}
+
+	if p.SecondaryCreator != "" {
+		v.Set("secondary_creator", p.SecondaryCreator)
+	}
+
+	if p.Title != "" {
+		v.Set("title", p.Title)
+	}
+
+	if p.YearStart != "" {
+		v.Set("year_start", p.YearStart)
+	}
+
+	if p.YearEnd != "" {
+		v.Set("year_end", p.YearEnd)
+	}
+
+	return v.Encode(), nil
+}
