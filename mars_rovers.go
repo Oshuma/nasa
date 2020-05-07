@@ -28,6 +28,13 @@ var (
 		Slug:    "spirit",
 		Cameras: []RoverCamera{RoverCameraFHAZ, RoverCameraRHAZ, RoverCameraNAVCAM, RoverCameraPANCAM, RoverCameraMINITES},
 	}
+
+	// Rovers is an easily iteratable array of rovers.
+	Rovers = []Rover{
+		RoverCuriosity,
+		RoverOpportunity,
+		RoverSpirit,
+	}
 )
 
 // RoverCamera represents a rover camera type.
@@ -99,5 +106,18 @@ var (
 		Name:     "MINITES",
 		FullName: "Miniature Thermal Emission Spectrometer (Mini-TES)",
 		Slug:     "minites",
+	}
+
+	// RoverCameras is an easily iteratable array of cameras.
+	RoverCameras = []RoverCamera{
+		RoverCameraFHAZ,
+		RoverCameraRHAZ,
+		RoverCameraMAST,
+		RoverCameraCHEMCAM,
+		RoverCameraMAHLI,
+		RoverCameraMARDI,
+		RoverCameraNAVCAM,
+		RoverCameraPANCAM,
+		RoverCameraMINITES,
 	}
 )
