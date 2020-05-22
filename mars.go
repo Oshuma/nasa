@@ -103,19 +103,22 @@ func MarsRoverPhotosLatest(p ParamEncoder, rover Rover) ([]*RoverPhoto, error) {
 
 // MissionManifest represents rover mission details.
 type MissionManifest struct {
-	Name        string `json:"name"`
-	LandingDate Date   `json:"landing_date"`
-	LaunchDate  Date   `json:"launch_date"`
-	Status      string `json:"status"`
-	MaxSol      int    `json:"max_sol"`
-	MaxDate     Date   `json:"max_date"`
-	TotalPhotos int    `json:"total_photos"`
-	Photos      []struct {
-		Sol         int      `json:"sol"`
-		EarthDate   Date     `json:"earth_date"`
-		TotalPhotos int      `json:"total_photos"`
-		Cameras     []string `json:"cameras"`
-	} `json:"photos"`
+	Name        string          `json:"name"`
+	LandingDate Date            `json:"landing_date"`
+	LaunchDate  Date            `json:"launch_date"`
+	Status      string          `json:"status"`
+	MaxSol      int             `json:"max_sol"`
+	MaxDate     Date            `json:"max_date"`
+	TotalPhotos int             `json:"total_photos"`
+	Photos      []ManifestPhoto `json:"photos"`
+}
+
+// ManifestPhoto stores info about mission manifest photos.
+type ManifestPhoto struct {
+	Sol         int      `json:"sol"`
+	EarthDate   Date     `json:"earth_date"`
+	TotalPhotos int      `json:"total_photos"`
+	Cameras     []string `json:"cameras"`
 }
 
 type manifestResponse struct {
