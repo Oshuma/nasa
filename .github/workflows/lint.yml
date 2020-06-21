@@ -6,12 +6,24 @@ on:
 
 jobs:
   lint:
-    name: Lint
+    strategy:
+      matrix:
+        go: ['1.13', '1.14']
+
+    name: Lint | Go ${{ matrix.go }}
     runs-on: ubuntu-latest
 
     steps:
+    - name: Set up Go ${{ matrix.go }}
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go }}
+
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
-    - name: Lint Code Base
-      uses: docker://github/super-linter:latest
+    - name: Install golint
+      run: go get -u golang.org/x/lint/golint
+
+    - name: Run Lint
+      run: golint -set_exit_status ./...
