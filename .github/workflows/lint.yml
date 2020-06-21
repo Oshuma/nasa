@@ -14,4 +14,4 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Lint Code Base
-      uses: uses: docker://github/super-linter:latest
+      uses: docker://github/super-linter:latest
