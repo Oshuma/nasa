@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	epicAPIURL         = "https://api.nasa.gov/EPIC"
-	epicImageURLFormat = "%s/archive/%s/%s/%s/%s/%s/%s.%s?api_key=%s"
+	epicBaseURL        = "https://epic.gsfc.nasa.gov"
+	epicImageURLFormat = "%s/archive/%s/%s/%s/%s/%s/%s.%s"
 )
 
 // EPICImage represents an image from the Earth Polychromatic Imaging Camera.
@@ -47,7 +47,7 @@ func EPIC(p ParamEncoder) (EPICImages, error) {
 		return EPICImages{}, err
 	}
 
-	url := fmt.Sprintf("%s/%s", epicAPIURL, query)
+	url := fmt.Sprintf("%s/%s", epicBaseURL, query)
 	content, err := getContent(url, nil)
 	if err != nil {
 		return EPICImages{}, err
@@ -60,6 +60,10 @@ func EPIC(p ParamEncoder) (EPICImages, error) {
 	}
 
 	images.buildURLs(params)
+
+	if params.Date.IsZero() {
+		images = images.mostRecent()
+	}
 
 	return images, nil
 }
@@ -74,60 +78,91 @@ func (images EPICImages) buildURLs(p *EPICParams) {
 	}
 }
 
-// Full:  https://api.nasa.gov/EPIC/archive/natural/2020/04/24/png/epic_1b_20200424002712.png?api_key=DEMO_KEY
-// Thumb: https://api.nasa.gov/EPIC/archive/natural/2020/04/24/thumbs/epic_1b_20200424002712.jpg?api_key=DEMO_KEY
-func (e *EPICImage) buildNaturalURLs(p *EPICParams) {
-	e.URL.Natural = fmt.Sprintf(epicImageURLFormat,
-		epicAPIURL,
-		"natural",
-		e.Date.Format("2006"), // Year
-		e.Date.Format("01"),   // Month
-		e.Date.Format("02"),   // Day
-		"png",
-		e.Image,
-		"png",
-		p.APIKey,
-	)
+func (images EPICImages) mostRecent() EPICImages {
+	var latest *EPICImage
 
-	e.URL.Thumb.Natural = fmt.Sprintf(epicImageURLFormat,
-		epicAPIURL,
-		"natural",
-		e.Date.Format("2006"), // Year
-		e.Date.Format("01"),   // Month
-		e.Date.Format("02"),   // Day
-		"thumbs",
-		e.Image,
-		"jpg",
-		p.APIKey,
-	)
+	for _, candidate := range images {
+		if candidate == nil {
+			continue
+		}
+		if latest == nil || candidate.Date.Time.After(latest.Date.Time) {
+			latest = candidate
+		}
+	}
+
+	if latest == nil {
+		return EPICImages{}
+	}
+
+	return EPICImages{latest}
 }
 
-// Full:  https://api.nasa.gov/EPIC/archive/enhanced/2020/04/24/png/epic_RGB_20200424002712.png?api_key=DEMO_KEY
-// Thumb: https://api.nasa.gov/EPIC/archive/enhanced/2020/04/24/thumbs/epic_RGB_20200424002712.jpg?api_key=DEMO_KEY
+// Full:  https://epic.gsfc.nasa.gov/archive/natural/2020/04/24/png/epic_1b_20200424002712.png
+// Thumb: https://epic.gsfc.nasa.gov/archive/natural/2020/04/24/thumbs/epic_1b_20200424002712.jpg
+func (e *EPICImage) buildNaturalURLs(p *EPICParams) {
+	imageID := imageIDForCollection(e.Image, e.Identifier, "natural")
+	e.URL.Natural = buildEPICArchiveURL(p, e.Date, "natural", "png", imageID, "png")
+	e.URL.Thumb.Natural = buildEPICArchiveURL(p, e.Date, "natural", "thumbs", imageID, "jpg")
+}
+
+// Full:  https://epic.gsfc.nasa.gov/archive/enhanced/2020/04/24/png/epic_RGB_20200424002712.png
+// Thumb: https://epic.gsfc.nasa.gov/archive/enhanced/2020/04/24/thumbs/epic_RGB_20200424002712.jpg
 func (e *EPICImage) buildEnhancedURLs(p *EPICParams) {
-	enhancedID := strings.Replace(e.Image, "_1b_", "_RGB_", 1)
+	enhancedID := imageIDForCollection(e.Image, e.Identifier, "enhanced")
 
-	e.URL.Enhanced = fmt.Sprintf(epicImageURLFormat,
-		epicAPIURL,
-		"enhanced",
-		e.Date.Format("2006"), // Year
-		e.Date.Format("01"),   // Month
-		e.Date.Format("02"),   // Day
-		"png",
-		enhancedID,
-		"png",
-		p.APIKey,
+	e.URL.Enhanced = buildEPICArchiveURL(p, e.Date, "enhanced", "png", enhancedID, "png")
+	e.URL.Thumb.Enhanced = buildEPICArchiveURL(p, e.Date, "enhanced", "thumbs", enhancedID, "jpg")
+}
+
+func buildEPICArchiveURL(p *EPICParams, date EPICDate, collection, imageType, imageID, extension string) string {
+	base := fmt.Sprintf(
+		epicImageURLFormat,
+		epicBaseURL,
+		collection,
+		date.Format("2006"),
+		date.Format("01"),
+		date.Format("02"),
+		imageType,
+		imageID,
+		extension,
 	)
 
-	e.URL.Thumb.Enhanced = fmt.Sprintf(epicImageURLFormat,
-		epicAPIURL,
-		"enhanced",
-		e.Date.Format("2006"), // Year
-		e.Date.Format("01"),   // Month
-		e.Date.Format("02"),   // Day
-		"thumbs",
-		enhancedID,
-		"jpg",
-		p.APIKey,
-	)
+	if p != nil && p.APIKey != "" {
+		return fmt.Sprintf("%s?api_key=%s", base, p.APIKey)
+	}
+
+	return base
+}
+
+func imageIDForCollection(image, identifier, collection string) string {
+	switch collection {
+	case "natural":
+		if strings.Contains(image, "_1b_") {
+			return image
+		}
+		if strings.Contains(image, "_RGB_") {
+			return strings.Replace(image, "_RGB_", "_1b_", 1)
+		}
+		if strings.Contains(image, "_rgb_") {
+			return strings.Replace(image, "_rgb_", "_1b_", 1)
+		}
+		if identifier != "" {
+			return fmt.Sprintf("epic_1b_%s", identifier)
+		}
+	case "enhanced":
+		if strings.Contains(image, "_RGB_") {
+			return image
+		}
+		if strings.Contains(image, "_rgb_") {
+			return strings.Replace(image, "_rgb_", "_RGB_", 1)
+		}
+		if strings.Contains(image, "_1b_") {
+			return strings.Replace(image, "_1b_", "_RGB_", 1)
+		}
+		if identifier != "" {
+			return fmt.Sprintf("epic_RGB_%s", identifier)
+		}
+	}
+
+	return image
 }

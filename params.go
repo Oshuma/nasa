@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -78,25 +79,29 @@ func (p *APODParams) Encode() (string, error) {
 
 // EPICParams wraps the EPIC API params.
 type EPICParams struct {
-	APIKey string
-	Date   time.Time
+	APIKey     string
+	Date       time.Time
+	Collection string
 }
 
 // Encode returns a string representation for the given API type.
 func (p *EPICParams) Encode() (string, error) {
-	if p.APIKey == "" {
-		return "", ErrorNoAPIKey
+	collection := strings.Trim(p.Collection, "/")
+	if collection == "" {
+		collection = "natural"
 	}
 
-	val := "api/natural"
+	path := fmt.Sprintf("api/%s", collection)
 
 	if !p.Date.IsZero() {
-		val += fmt.Sprintf("/date/%s", p.Date.Format("2006-01-02"))
+		path += fmt.Sprintf("/date/%s", p.Date.Format("2006-01-02"))
 	}
 
-	val += fmt.Sprintf("?api_key=%s", p.APIKey)
+	if p.APIKey == "" {
+		return path, nil
+	}
 
-	return val, nil
+	return fmt.Sprintf("%s?api_key=%s", path, p.APIKey), nil
 }
 
 // MarsPhotosParams wraps the Mars Photos API params.

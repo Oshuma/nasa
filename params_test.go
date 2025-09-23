@@ -137,16 +137,21 @@ func TestEncode(t *testing.T) {
 	})
 
 	t.Run("EPICParams", func(t *testing.T) {
-		t.Run("no APIKey", func(t *testing.T) {
+		t.Run("defaults", func(t *testing.T) {
 			p := EPICParams{}
 
-			_, err := p.Encode()
-			if err != ErrorNoAPIKey {
-				t.Errorf("wrong error returned: %s", err)
+			out, err := p.Encode()
+			if err != nil {
+				t.Error(err)
+			}
+
+			expected := "api/natural"
+			if out != expected {
+				t.Errorf("expected: %s, got: %s", expected, out)
 			}
 		})
 
-		t.Run("date", func(t *testing.T) {
+		t.Run("date with API key", func(t *testing.T) {
 			d := time.Now()
 			p := &EPICParams{
 				APIKey: apiKey,
@@ -164,15 +169,15 @@ func TestEncode(t *testing.T) {
 			}
 		})
 
-		t.Run("no date", func(t *testing.T) {
-			p := &EPICParams{APIKey: apiKey}
+		t.Run("custom collection", func(t *testing.T) {
+			p := &EPICParams{Collection: "enhanced"}
 
 			out, err := p.Encode()
 			if err != nil {
 				t.Error(err)
 			}
 
-			expected := fmt.Sprintf("api/natural?api_key=%s", apiKey)
+			expected := "api/enhanced"
 			if out != expected {
 				t.Errorf("expected: %s, got: %s", expected, out)
 			}
