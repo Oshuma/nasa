@@ -7,7 +7,9 @@ import (
 
 const apodAPIURL = "https://api.nasa.gov/planetary/apod"
 
-// APODImage represents an Astronomy Picture Of the Day.
+// APODImage represents an Astronomy Picture Of the Day and mirrors the fields returned
+// by https://api.nasa.gov/planetary/apod. Most callers obtain an APODImage via APOD or
+// APODList rather than instantiating the struct directly.
 type APODImage struct {
 	Date           Date   `json:"date"`
 	Title          string `json:"title"`
@@ -20,7 +22,8 @@ type APODImage struct {
 	ServiceVersion string `json:"service_version"`
 }
 
-// APOD returns the Astronomy Picture Of the Day.
+// APOD returns the Astronomy Picture Of the Day. Provide an APODParams value with at
+// least an API key; optional filters such as Date control which image is fetched.
 func APOD(p ParamEncoder) (APODImage, error) {
 	content, err := getContent(apodAPIURL, p)
 	if err != nil {
@@ -39,7 +42,8 @@ func APOD(p ParamEncoder) (APODImage, error) {
 	return images[0], nil
 }
 
-// APODList returns a slice of APOD images for queries that request multiple items.
+// APODList returns a slice of APOD images for queries that request multiple items, such as
+// a date range or random count. See APODParams for the supported filters.
 func APODList(p ParamEncoder) ([]APODImage, error) {
 	content, err := getContent(apodAPIURL, p)
 	if err != nil {

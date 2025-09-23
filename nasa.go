@@ -8,13 +8,15 @@ import (
 // Version is the package version.
 const Version = "0.1.2"
 
-// LatLon represents latitude/longitude coordinates.
+// LatLon represents latitude/longitude coordinates as returned by several NASA
+// endpoints, including EPIC image metadata.
 type LatLon struct {
 	Lat float64 `json:"lat"`
 	Lon float64 `json:"lon"`
 }
 
-// Quaternions represents quadrant coordinates.
+// Quaternions represents spacecraft attitude quaternions. EPIC responses embed this
+// orientation information for the DSCOVR spacecraft.
 type Quaternions struct {
 	Q0 float64 `json:"q0"`
 	Q1 float64 `json:"q1"`
@@ -22,7 +24,8 @@ type Quaternions struct {
 	Q3 float64 `json:"q3"`
 }
 
-// XYZ represents coordinates in 3D space.
+// XYZ represents coordinates in 3D space. NASA services commonly use this shape for
+// positional data such as DSCOVR-to-sun vectors.
 type XYZ struct {
 	X float64 `json:"x"`
 	Y float64 `json:"y"`

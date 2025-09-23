@@ -11,7 +11,9 @@ const (
 	epicImageURLFormat = "%s/archive/%s/%s/%s/%s/%s/%s.%s"
 )
 
-// EPICImage represents an image from the Earth Polychromatic Imaging Camera.
+// EPICImage represents an image from the Earth Polychromatic Imaging Camera. The
+// helper populates archive URLs so clients can link directly to the natural or
+// enhanced imagery returned by the EPIC API.
 type EPICImage struct {
 	Date       EPICDate `json:"date"`
 	Identifier string   `json:"identifier"`
@@ -35,7 +37,10 @@ type EPICImage struct {
 	} `json:"-"`
 }
 
-// EPIC gets a response from the Earth Polychromatic Imaging Camera.
+// EPIC fetches imagery metadata from the Earth Polychromatic Imaging Camera. Populate
+// EPICParams with the desired collection and optional date; when Date is omitted the
+// function returns the most recent image for the requested collection. The helper also
+// annotates each image with convenient archive download URLs.
 func EPIC(p ParamEncoder) (EPICImages, error) {
 	params, ok := p.(*EPICParams)
 	if !ok {
@@ -68,7 +73,7 @@ func EPIC(p ParamEncoder) (EPICImages, error) {
 	return images, nil
 }
 
-// EPICImages is an array of pointers to EPICImage.
+// EPICImages is an array of pointers to EPICImage returned by the EPIC helper.
 type EPICImages []*EPICImage
 
 func (images EPICImages) buildURLs(p *EPICParams) {

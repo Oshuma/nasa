@@ -11,7 +11,8 @@ const (
 	marsPhotosManifestsAPIURL = "https://api.nasa.gov/mars-photos/api/v1/manifests/%s"
 )
 
-// RoverPhoto represents a single photo from a rover camera.
+// RoverPhoto represents a single Mars rover image, including camera and rover metadata
+// provided by the /rovers/{name}/photos endpoint.
 type RoverPhoto struct {
 	ID        int    `json:"id"`
 	Sol       int    `json:"sol"`
@@ -39,13 +40,15 @@ type RoverPhoto struct {
 	} `json:"rover"`
 }
 
-// RoverPhotos wraps an array of pointers of RoverPhoto.
+// RoverPhotos wraps an array of RoverPhoto pointers and captures the requested page
+// number. Use MarsRoverPhotos to populate this type.
 type RoverPhotos struct {
 	Photos []*RoverPhoto `json:"photos"`
 	Page   int
 }
 
-// MarsRoverPhotos returns photos for the given params and Rover.
+// MarsRoverPhotos returns photos for the given MarsPhotosParams and Rover. The helper
+// validates that requested cameras exist on the rover before calling the official API.
 func MarsRoverPhotos(p ParamEncoder, rover Rover) (RoverPhotos, error) {
 	params, ok := p.(*MarsPhotosParams)
 	if !ok {
@@ -84,7 +87,8 @@ type latestPhotosResponse struct {
 	Photos []*RoverPhoto `json:"latest_photos"`
 }
 
-// MarsRoverPhotosLatest returns the most recent Sol for which photos exist.
+// MarsRoverPhotosLatest returns the most recent sol for which photos exist for the
+// specified rover. Supply MarsPhotosParams to control API key usage or filters.
 func MarsRoverPhotosLatest(p ParamEncoder, rover Rover) ([]*RoverPhoto, error) {
 	url := fmt.Sprintf(marsLatestPhotosAPIURL, rover.Slug)
 	content, err := getContent(url, p)
@@ -101,7 +105,8 @@ func MarsRoverPhotosLatest(p ParamEncoder, rover Rover) ([]*RoverPhoto, error) {
 	return r.Photos, nil
 }
 
-// MissionManifest represents rover mission details.
+// MissionManifest represents rover mission details returned by the rover manifests
+// endpoint.
 type MissionManifest struct {
 	Name        string          `json:"name"`
 	LandingDate Date            `json:"landing_date"`
@@ -125,7 +130,8 @@ type manifestResponse struct {
 	Manifest MissionManifest `json:"photo_manifest"`
 }
 
-// MarsMissionManifest returns the rover mission details.
+// MarsMissionManifest returns the rover mission details from the manifests endpoint for
+// the provided rover and MarsPhotosParams.
 func MarsMissionManifest(p ParamEncoder, rover Rover) (MissionManifest, error) {
 	url := fmt.Sprintf(marsPhotosManifestsAPIURL, rover.Slug)
 	content, err := getContent(url, p)

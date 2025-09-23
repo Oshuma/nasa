@@ -32,33 +32,120 @@ go get github.com/Oshuma/nasa
 
 Import the package and call the client helpers from your code.
 
-```go
-package main
+## API Examples
 
+All snippets assume a shared set of imports:
+
+```go
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/Oshuma/nasa"
 )
+```
 
-func main() {
-	params := &nasa.APODParams{
-		APIKey:    "YOUR_API_KEY",
-		StartDate: time.Now().AddDate(0, 0, -3),
-		EndDate:   time.Now(),
-		Thumbs:    true,
+### APOD: Astronomy Picture of the Day
+
+```go
+apod, err := nasa.APOD(&nasa.APODParams{
+	APIKey: os.Getenv("NASA_API_KEY"),
+	Date:   time.Now(),
+})
+if err != nil {
+	log.Fatal(err)
+}
+
+fmt.Printf("%s: %s\n", apod.Date.Format("2006-01-02"), apod.Title)
+fmt.Printf("Media: %s\n", apod.URL)
+```
+
+If you need more than one image (for example, a date range) use `APODList`:
+
+```go
+items, err := nasa.APODList(&nasa.APODParams{
+	APIKey:    os.Getenv("NASA_API_KEY"),
+	StartDate: time.Now().AddDate(0, 0, -3),
+	EndDate:   time.Now(),
+	Thumbs:    true,
+})
+if err != nil {
+	log.Fatal(err)
+}
+
+for _, item := range items {
+	fmt.Printf("%s: %s (%s)\n", item.Date.Format("2006-01-02"), item.Title, item.MediaType)
+}
+```
+
+### EPIC: Earth Polychromatic Imaging Camera
+
+```go
+images, err := nasa.EPIC(&nasa.EPICParams{
+	APIKey:     os.Getenv("NASA_API_KEY"),
+	Collection: "natural",
+})
+if err != nil {
+	log.Fatal(err)
+}
+
+for _, img := range images {
+	fmt.Printf("%s - %s\n", img.Date.Format("2006-01-02"), img.Caption)
+	fmt.Println("Natural image:", img.URL.Natural)
+	fmt.Println("Thumbnail:", img.URL.Thumb.Natural)
+}
+```
+
+Passing a `Date` retrieves imagery for a specific day; otherwise the helper returns the most recent image for the requested collection (natural or enhanced).
+
+### Mars Rover Photos
+
+```go
+photos, err := nasa.MarsRoverPhotos(&nasa.MarsPhotosParams{
+	APIKey: os.Getenv("NASA_API_KEY"),
+	Sol:    1000,
+	Camera: nasa.RoverCameraMAST,
+	Page:   1,
+}, nasa.RoverCuriosity)
+if err != nil {
+	log.Fatal(err)
+}
+
+for _, photo := range photos.Photos {
+	fmt.Printf("%s - %s\n", photo.EarthDate.Format("2006-01-02"), photo.Image)
+}
+```
+
+Helpers such as `nasa.RoverCuriosity`, `nasa.RoverPerseverance`, and the predefined `RoverCamera*` constants ensure only valid camera selections are sent for a rover. Use `MarsRoverPhotosLatest` to fetch the latest sol for a rover.
+
+### NASA Image and Video Library
+
+```go
+results, err := nasa.MediaSearch(&nasa.MediaParams{
+	Query:     "apollo 11",
+	MediaType: "image,video",
+	Page:      1,
+})
+if err != nil {
+	log.Fatal(err)
+}
+
+fmt.Printf("Total hits: %d\n", results.Metadata.TotalHits)
+
+for _, item := range results.Items {
+	if len(item.Data) == 0 {
+		continue
 	}
-
-	items, err := nasa.APODList(params)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, item := range items {
-		fmt.Printf("%s: %s\n", item.Date.Format("2006-01-02"), item.Title)
-		fmt.Printf("Media: %s\n\n", item.URL)
+	data := item.Data[0]
+	fmt.Printf("%s - %s\n", data.NasaID, data.Title)
+	for _, link := range item.Links {
+		if link.Rel == "preview" {
+			fmt.Println("Preview:", link.Href)
+		}
 	}
 }
 ```
+
+Any combination of documented search parameters can be supplied through `MediaParams`. Use pagination helpers like `Page` and `PageSize`, or refine searches with fields such as `Center`, `Keywords`, `Photographer`, and `YearStart` / `YearEnd`.

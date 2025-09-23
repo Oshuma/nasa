@@ -16,7 +16,8 @@ const (
 	albumAPIURL    = "https://images-api.nasa.gov/album/%s"
 )
 
-// Media represents a media search response.
+// Media represents a NASA Image and Video Library search response. The structure maps
+// directly to the Collection+JSON payload returned by the /search endpoint.
 type Media struct {
 	Metadata struct {
 		TotalHits int `json:"total_hits"`
@@ -65,7 +66,9 @@ type mediaResponse struct {
 	Collection Media `json:"collection"`
 }
 
-// MediaSearch searches the NASA Image and Video Library.
+// MediaSearch queries the NASA Image and Video Library /search endpoint using the
+// provided MediaParams. At least one search parameter must be supplied; the helper
+// unmarshals the Collection+JSON response into a Media value for easier consumption.
 func MediaSearch(p ParamEncoder) (Media, error) {
 	params, ok := p.(*MediaParams)
 	if !ok {
@@ -86,7 +89,8 @@ func MediaSearch(p ParamEncoder) (Media, error) {
 	return mr.Collection, nil
 }
 
-// MediaAssets represents a media search query.
+// MediaAssets represents the results from the media asset manifest endpoint,
+// describing downloadable resources for a media item identified by NASA ID.
 type MediaAssets struct {
 	Items []struct {
 		Href string `json:"href"`
@@ -99,7 +103,8 @@ type mediaAssetResponse struct {
 	Collection MediaAssets `json:"collection"`
 }
 
-// GetMediaAssets gets the media assets for the given nasaID.
+// GetMediaAssets retrieves the media asset manifest for the given NASA ID, returning
+// download links for each available rendition (image, video, metadata, etc.).
 func GetMediaAssets(nasaID string) (MediaAssets, error) {
 	url := fmt.Sprintf(assetAPIURL, nasaID)
 	content, err := getContent(url, nil)
@@ -120,7 +125,8 @@ type mediaMetadataResponse struct {
 	Location string `json:"location"`
 }
 
-// MediaMetadata holds metadata info for a media resource.
+// MediaMetadata holds metadata info for a media resource. Use GetMediaMetadata to fetch
+// the metadata JSON and unmarshal it into this structure.
 type MediaMetadata struct {
 	// TODO: Split these off into structs based on their namespace.
 	// TODO: Parse the weird timestamps: "2006:01:02 15:04:05" and "2006:01:02 15:04:05-0700"
@@ -187,7 +193,8 @@ type MediaMetadata struct {
 	XMPXMPToolkit                string   `json:"XMP:XMPToolkit"`
 }
 
-// GetMediaMetadata gets the metadata for media with nasaID.
+// GetMediaMetadata gets the metadata for media with the provided NASA ID. The helper
+// first resolves the metadata location and then retrieves the JSON payload.
 func GetMediaMetadata(nasaID string) (MediaMetadata, error) {
 	url := fmt.Sprintf(metadataAPIURL, nasaID)
 	content, err := getContent(url, nil)

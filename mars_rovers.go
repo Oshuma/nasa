@@ -4,14 +4,15 @@ const (
 	marsRoversAPIURL = "https://api.nasa.gov/mars-photos/api/v1/rovers"
 )
 
-// Rover represents a Mars rover.
+// Rover represents a Mars rover. Use the predefined Rover* values when calling
+// MarsRoverPhotos or MarsMissionManifest to avoid constructing your own instance.
 type Rover struct {
 	Name    string
 	Slug    string
 	Cameras []RoverCamera
 }
 
-// Defines Rovers to be used in the API request.
+// Defines Rovers to be used in Mars rover API requests.
 var (
 	RoverCuriosity = Rover{
 		Name:    "Curiosity",
@@ -53,7 +54,8 @@ var (
 		Cameras: []RoverCamera{RoverCameraFHAZ, RoverCameraRHAZ, RoverCameraNAVCAM, RoverCameraPANCAM, RoverCameraMINITES},
 	}
 
-	// Rovers is an easily iteratable array of rovers.
+	// Rovers is a convenience slice for iterating through every supported rover when
+	// building UI pickers or issuing batch calls.
 	Rovers = []Rover{
 		RoverCuriosity,
 		RoverPerseverance,
@@ -62,7 +64,8 @@ var (
 	}
 )
 
-// RoverCamera represents a rover camera type.
+// RoverCamera represents a rover camera type. Refer to the exported RoverCamera*
+// variables for valid camera selections per rover.
 type RoverCamera struct {
 	Name     string
 	FullName string

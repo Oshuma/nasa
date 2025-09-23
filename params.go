@@ -13,7 +13,8 @@ type ParamEncoder interface {
 	Encode() (string, error)
 }
 
-// APIParam is used when only an APIKey is needed.
+// APIParam is used when only an API key is needed. Most NASA endpoints require at least
+// this parameter.
 type APIParam struct {
 	APIKey string
 }
@@ -30,7 +31,8 @@ func (p *APIParam) Encode() (string, error) {
 	return v.Encode(), nil
 }
 
-// APODParams wraps the APOD API params.
+// APODParams wraps the APOD API params used by APOD and APODList. Populate APIKey and any
+// optional filters such as Date or StartDate/EndDate.
 type APODParams struct {
 	APIKey    string
 	Date      time.Time
@@ -77,7 +79,8 @@ func (p *APODParams) Encode() (string, error) {
 	return v.Encode(), nil
 }
 
-// EPICParams wraps the EPIC API params.
+// EPICParams wraps the EPIC API params. Provide the desired collection (natural or
+// enhanced), optional Date, and API key if required.
 type EPICParams struct {
 	APIKey     string
 	Date       time.Time
@@ -104,7 +107,8 @@ func (p *EPICParams) Encode() (string, error) {
 	return fmt.Sprintf("%s?api_key=%s", path, p.APIKey), nil
 }
 
-// MarsPhotosParams wraps the Mars Photos API params.
+// MarsPhotosParams wraps the Mars Photos API params. Use it with MarsRoverPhotos or
+// MarsRoverPhotosLatest to supply an API key, sol/earth date, camera, and pagination.
 type MarsPhotosParams struct {
 	APIKey    string
 	Sol       int
@@ -139,7 +143,9 @@ func (p *MarsPhotosParams) Encode() (string, error) {
 	return v.Encode(), nil
 }
 
-// MediaParams wraps the Image and Video Library (media) params.
+// MediaParams wraps the Image and Video Library (media) search parameters. At least one
+// non-pagination filter, such as Query, NasaID, or Keywords, must be specified before a
+// search can be performed.
 type MediaParams struct {
 	Query            string
 	Center           string
