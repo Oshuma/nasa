@@ -12,8 +12,8 @@ var (
 	// ErrorNoMetadata is returned if a media asset has no metadata.
 	ErrorNoMetadata = errors.New("media has no metadata")
 
-	// ErrorNoQuery is returned if there is no search query provided.
-	ErrorNoQuery = errors.New("must provide a search query")
+	// ErrorNoQuery is returned if there are no search parameters provided.
+	ErrorNoQuery = errors.New("must provide at least one search parameter")
 
 	// ErrorParamsMismatch is returned when the wrong type of ParamEncoder is used.
 	ErrorParamsMismatch = errors.New("wrong param type passed")

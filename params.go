@@ -150,6 +150,7 @@ type MediaParams struct {
 	MediaType        string
 	NasaID           string
 	Page             int
+	PageSize         int
 	Photographer     string
 	SecondaryCreator string
 	Title            string
@@ -161,36 +162,45 @@ type MediaParams struct {
 func (p *MediaParams) Encode() (string, error) {
 	v := url.Values{}
 
-	if p.Query == "" {
-		return "", ErrorNoQuery
+	hasSearchParam := false
+
+	if p.Query != "" {
+		hasSearchParam = true
+		v.Set("q", p.Query)
 	}
-	v.Set("q", p.Query)
 
 	if p.Center != "" {
+		hasSearchParam = true
 		v.Set("center", p.Center)
 	}
 
 	if p.Description != "" {
+		hasSearchParam = true
 		v.Set("description", p.Description)
 	}
 
 	if p.Description508 != "" {
+		hasSearchParam = true
 		v.Set("description_508", p.Description508)
 	}
 
 	if p.Keywords != "" {
+		hasSearchParam = true
 		v.Set("keywords", p.Keywords)
 	}
 
 	if p.Location != "" {
+		hasSearchParam = true
 		v.Set("location", p.Location)
 	}
 
 	if p.MediaType != "" {
+		hasSearchParam = true
 		v.Set("media_type", p.MediaType)
 	}
 
 	if p.NasaID != "" {
+		hasSearchParam = true
 		v.Set("nasa_id", p.NasaID)
 	}
 
@@ -198,24 +208,37 @@ func (p *MediaParams) Encode() (string, error) {
 		v.Set("page", strconv.Itoa(p.Page))
 	}
 
+	if p.PageSize > 0 {
+		v.Set("page_size", strconv.Itoa(p.PageSize))
+	}
+
 	if p.Photographer != "" {
+		hasSearchParam = true
 		v.Set("photographer", p.Photographer)
 	}
 
 	if p.SecondaryCreator != "" {
+		hasSearchParam = true
 		v.Set("secondary_creator", p.SecondaryCreator)
 	}
 
 	if p.Title != "" {
+		hasSearchParam = true
 		v.Set("title", p.Title)
 	}
 
 	if p.YearStart != "" {
+		hasSearchParam = true
 		v.Set("year_start", p.YearStart)
 	}
 
 	if p.YearEnd != "" {
+		hasSearchParam = true
 		v.Set("year_end", p.YearEnd)
+	}
+
+	if !hasSearchParam {
+		return "", ErrorNoQuery
 	}
 
 	return v.Encode(), nil

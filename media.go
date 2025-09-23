@@ -25,6 +25,7 @@ type Media struct {
 	Items []struct {
 		Data []struct {
 			Center           string    `json:"center"`
+			Album            []string  `json:"album"`
 			SecondaryCreator string    `json:"secondary_creator"`
 			Keywords         []string  `json:"keywords"`
 			Description      string    `json:"description"`
@@ -32,12 +33,19 @@ type Media struct {
 			MediaType        string    `json:"media_type"`
 			NasaID           string    `json:"nasa_id"`
 			DateCreated      time.Time `json:"date_created"`
+			Location         string    `json:"location"`
+			Photographer     string    `json:"photographer"`
+			Title            string    `json:"title"`
 		} `json:"data"`
 
 		Links []struct {
 			Render string `json:"render"`
 			Href   string `json:"href"`
 			Rel    string `json:"rel"`
+			Prompt string `json:"prompt"`
+			Width  int    `json:"width"`
+			Height int    `json:"height"`
+			Size   int64  `json:"size"`
 		} `json:"links"`
 
 		Href string `json:"href"`
@@ -59,7 +67,12 @@ type mediaResponse struct {
 
 // MediaSearch searches the NASA Image and Video Library.
 func MediaSearch(p ParamEncoder) (Media, error) {
-	content, err := getContent(mediaAPIURL, p)
+	params, ok := p.(*MediaParams)
+	if !ok {
+		return Media{}, ErrorParamsMismatch
+	}
+
+	content, err := getContent(mediaAPIURL, params)
 	if err != nil {
 		return Media{}, err
 	}

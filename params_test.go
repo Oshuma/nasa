@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"fmt"
+	"net/url"
 	"time"
 )
 
@@ -241,12 +242,84 @@ func TestEncode(t *testing.T) {
 	})
 
 	t.Run("MediaParams", func(t *testing.T) {
-		t.Run("require Query", func(t *testing.T) {
+		t.Run("require search parameter", func(t *testing.T) {
 			p := &MediaParams{}
 
 			_, err := p.Encode()
 			if err != ErrorNoQuery {
 				t.Errorf("wrong error returned: %s", err)
+			}
+		})
+
+		t.Run("allows non-query search parameters", func(t *testing.T) {
+			p := &MediaParams{NasaID: "as11"}
+
+			out, err := p.Encode()
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			values, err := url.ParseQuery(out)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if got := values.Get("nasa_id"); got != "as11" {
+				t.Errorf("expected nasa_id to be encoded, got: %s", got)
+			}
+		})
+
+		t.Run("encodes all supported parameters", func(t *testing.T) {
+			p := &MediaParams{
+				Query:            "apollo 11",
+				Center:           "JSC",
+				Description:      "moon landing",
+				Description508:   "accessible",
+				Keywords:         "apollo,moon",
+				Location:         "Moon",
+				MediaType:        "image,video",
+				NasaID:           "as11-40-5874",
+				Page:             3,
+				PageSize:         50,
+				Photographer:     "Neil Armstrong",
+				SecondaryCreator: "Buzz Aldrin",
+				Title:            "Apollo 11",
+				YearStart:        "1968",
+				YearEnd:          "1969",
+			}
+
+			out, err := p.Encode()
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			values, err := url.ParseQuery(out)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			checks := map[string]string{
+				"q":                 "apollo 11",
+				"center":            "JSC",
+				"description":       "moon landing",
+				"description_508":   "accessible",
+				"keywords":          "apollo,moon",
+				"location":          "Moon",
+				"media_type":        "image,video",
+				"nasa_id":           "as11-40-5874",
+				"page":              "3",
+				"page_size":         "50",
+				"photographer":      "Neil Armstrong",
+				"secondary_creator": "Buzz Aldrin",
+				"title":             "Apollo 11",
+				"year_start":        "1968",
+				"year_end":          "1969",
+			}
+
+			for key, want := range checks {
+				if got := values.Get(key); got != want {
+					t.Errorf("expected %s=%s, got %s", key, want, got)
+				}
 			}
 		})
 	})
