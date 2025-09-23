@@ -31,9 +31,13 @@ func (p *APIParam) Encode() (string, error) {
 
 // APODParams wraps the APOD API params.
 type APODParams struct {
-	APIKey string
-	Date   time.Time
-	HD     bool
+	APIKey    string
+	Date      time.Time
+	HD        bool
+	StartDate time.Time
+	EndDate   time.Time
+	Count     int
+	Thumbs    bool
 }
 
 // Encode returns a string representation for the given API type.
@@ -49,8 +53,24 @@ func (p *APODParams) Encode() (string, error) {
 		v.Set("date", p.Date.Format("2006-01-02"))
 	}
 
+	if !p.StartDate.IsZero() {
+		v.Set("start_date", p.StartDate.Format("2006-01-02"))
+	}
+
+	if !p.EndDate.IsZero() {
+		v.Set("end_date", p.EndDate.Format("2006-01-02"))
+	}
+
+	if p.Count > 0 {
+		v.Set("count", strconv.Itoa(p.Count))
+	}
+
 	if p.HD {
 		v.Set("hd", "true")
+	}
+
+	if p.Thumbs {
+		v.Set("thumbs", "true")
 	}
 
 	return v.Encode(), nil

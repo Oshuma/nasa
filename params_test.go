@@ -84,6 +84,7 @@ func TestEncode(t *testing.T) {
 				APIKey: apiKey,
 				Date:   d,
 				HD:     true,
+				Thumbs: true,
 			}
 
 			out, err := p.Encode()
@@ -91,7 +92,44 @@ func TestEncode(t *testing.T) {
 				t.Error(err)
 			}
 
-			expected := fmt.Sprintf("api_key=%s&date=%s&hd=true", apiKey, d.Format("2006-01-02"))
+			expected := fmt.Sprintf("api_key=%s&date=%s&hd=true&thumbs=true", apiKey, d.Format("2006-01-02"))
+			if out != expected {
+				t.Errorf("expected: %s, got %s", expected, out)
+			}
+		})
+
+		t.Run("date range", func(t *testing.T) {
+			start := time.Now().AddDate(0, 0, -5)
+			end := time.Now()
+			p := &APODParams{
+				APIKey:    apiKey,
+				StartDate: start,
+				EndDate:   end,
+			}
+
+			out, err := p.Encode()
+			if err != nil {
+				t.Error(err)
+			}
+
+			expected := fmt.Sprintf("api_key=%s&end_date=%s&start_date=%s", apiKey, end.Format("2006-01-02"), start.Format("2006-01-02"))
+			if out != expected {
+				t.Errorf("expected: %s, got %s", expected, out)
+			}
+		})
+
+		t.Run("count", func(t *testing.T) {
+			p := &APODParams{
+				APIKey: apiKey,
+				Count:  3,
+			}
+
+			out, err := p.Encode()
+			if err != nil {
+				t.Error(err)
+			}
+
+			expected := fmt.Sprintf("api_key=%s&count=3", apiKey)
 			if out != expected {
 				t.Errorf("expected: %s, got %s", expected, out)
 			}

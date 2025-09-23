@@ -1,1 +1,3 @@
-/tmp
+.cache/
+.env
+tmp/

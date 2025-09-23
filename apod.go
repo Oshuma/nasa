@@ -1,6 +1,7 @@
 package nasa
 
 import (
+	"bytes"
 	"encoding/json"
 )
 
@@ -12,6 +13,7 @@ type APODImage struct {
 	Title          string `json:"title"`
 	URL            string `json:"url"`
 	HDURL          string `json:"hdurl"`
+	ThumbnailURL   string `json:"thumbnail_url"`
 	Explanation    string `json:"explanation"`
 	MediaType      string `json:"media_type"`
 	Copyright      string `json:"copyright"`
@@ -25,11 +27,46 @@ func APOD(p ParamEncoder) (APODImage, error) {
 		return APODImage{}, err
 	}
 
-	img := APODImage{}
-	err = json.Unmarshal(content, &img)
+	images, err := parseAPODContent(content)
 	if err != nil {
 		return APODImage{}, err
 	}
 
-	return img, nil
+	if len(images) == 0 {
+		return APODImage{}, nil
+	}
+
+	return images[0], nil
+}
+
+// APODList returns a slice of APOD images for queries that request multiple items.
+func APODList(p ParamEncoder) ([]APODImage, error) {
+	content, err := getContent(apodAPIURL, p)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseAPODContent(content)
+}
+
+func parseAPODContent(content []byte) ([]APODImage, error) {
+	trimmed := bytes.TrimSpace(content)
+	if len(trimmed) == 0 {
+		return nil, nil
+	}
+
+	if trimmed[0] == '{' {
+		img := APODImage{}
+		if err := json.Unmarshal(content, &img); err != nil {
+			return nil, err
+		}
+		return []APODImage{img}, nil
+	}
+
+	images := []APODImage{}
+	if err := json.Unmarshal(content, &images); err != nil {
+		return nil, err
+	}
+
+	return images, nil
 }

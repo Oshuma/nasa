@@ -8,7 +8,7 @@ import (
 
 func TestUnmarshalJSON(t *testing.T) {
 	t.Run("Date", func(t *testing.T) {
-		in := []byte(`""2020-04-29""`)
+		in := []byte("\"2020-04-29\"")
 		d := &Date{}
 		err := d.UnmarshalJSON(in)
 		if err != nil {
@@ -26,7 +26,7 @@ func TestUnmarshalJSON(t *testing.T) {
 	})
 
 	t.Run("EPICDate", func(t *testing.T) {
-		in := []byte(`""2020-04-29 09:08:07""`)
+		in := []byte("\"2020-04-29 09:08:07\"")
 		d := &EPICDate{}
 		err := d.UnmarshalJSON(in)
 		if err != nil {
