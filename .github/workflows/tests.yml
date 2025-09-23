@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, ubuntu-24.04, ubuntu-20.04, macos-latest, windows-latest]
-        go: ['1.14', '1.15', '1.24']
+        go: ['1.24', '1.25']
 
     name: ${{ matrix.os }} | Go ${{ matrix.go }}
     runs-on: ${{ matrix.os }}
