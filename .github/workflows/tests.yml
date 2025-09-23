@@ -8,8 +8,8 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-20.04, ubuntu-18.04, macos-latest, windows-latest]
-        go: ['1.13', '1.14', '1.15']
+        os: [ubuntu-latest, ubuntu-24.04, ubuntu-20.04, macos-latest, windows-latest]
+        go: ['1.14', '1.15', '1.24']
 
     name: ${{ matrix.os }} | Go ${{ matrix.go }}
     runs-on: ${{ matrix.os }}
