@@ -104,7 +104,7 @@ func (p *EPICParams) Encode() (string, error) {
 		return path, nil
 	}
 
-	return fmt.Sprintf("%s?api_key=%s", path, p.APIKey), nil
+	return path + "?" + url.Values{"api_key": {p.APIKey}}.Encode(), nil
 }
 
 // MarsPhotosParams wraps the Mars Photos API params. Use it with MarsRoverPhotos or

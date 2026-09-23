@@ -208,9 +208,9 @@ func GetMediaMetadata(nasaID string) (MediaMetadata, error) {
 		return MediaMetadata{}, err
 	}
 
-	// Make sure we get a valid URL.
-	_, err = neturl.Parse(resp.Location)
-	if err != nil {
+	// Make sure we get a valid, absolute URL.
+	u, err := neturl.Parse(resp.Location)
+	if err != nil || !u.IsAbs() || u.Host == "" {
 		return MediaMetadata{}, ErrorNoMetadata
 	}
 
@@ -256,6 +256,9 @@ func GetMediaCaptions(nasaID string) (string, error) {
 	err = json.Unmarshal(content, &c)
 	if err != nil {
 		return "", err
+	}
+	if c.Location == "" {
+		return "", ErrorNoCaptions
 	}
 
 	captions, err := getContent(c.Location, nil)

@@ -90,6 +90,10 @@ type latestPhotosResponse struct {
 // MarsRoverPhotosLatest returns the most recent sol for which photos exist for the
 // specified rover. Supply MarsPhotosParams to control API key usage or filters.
 func MarsRoverPhotosLatest(p ParamEncoder, rover Rover) ([]*RoverPhoto, error) {
+	if _, ok := p.(*MarsPhotosParams); !ok {
+		return []*RoverPhoto{}, ErrorParamsMismatch
+	}
+
 	url := fmt.Sprintf(marsLatestPhotosAPIURL, rover.Slug)
 	content, err := getContent(url, p)
 	if err != nil {
@@ -133,6 +137,10 @@ type manifestResponse struct {
 // MarsMissionManifest returns the rover mission details from the manifests endpoint for
 // the provided rover and MarsPhotosParams.
 func MarsMissionManifest(p ParamEncoder, rover Rover) (MissionManifest, error) {
+	if _, ok := p.(*MarsPhotosParams); !ok {
+		return MissionManifest{}, ErrorParamsMismatch
+	}
+
 	url := fmt.Sprintf(marsPhotosManifestsAPIURL, rover.Slug)
 	content, err := getContent(url, p)
 	if err != nil {

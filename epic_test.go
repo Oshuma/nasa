@@ -67,6 +67,20 @@ func TestBuildURLsWithAPIKey(t *testing.T) {
 	}
 }
 
+func TestBuildURLsEscapesAPIKey(t *testing.T) {
+	p := &EPICParams{APIKey: "a&b=c"}
+	e := &EPICImage{
+		Image: "epic_1b_20200424002712",
+		Date:  EPICDate{Time: time.Date(2020, 4, 24, 0, 0, 0, 0, time.UTC)},
+	}
+
+	e.buildNaturalURLs(p)
+
+	if !strings.HasSuffix(e.URL.Natural, "?api_key=a%26b%3Dc") {
+		t.Errorf("expected escaped api key suffix, got: %s", e.URL.Natural)
+	}
+}
+
 func TestBuildURLsFromEnhancedImage(t *testing.T) {
 	fullNatural := "https://epic.gsfc.nasa.gov/archive/natural/2020/04/24/png/epic_1b_20200424002712.png"
 	fullEnhanced := "https://epic.gsfc.nasa.gov/archive/enhanced/2020/04/24/png/epic_RGB_20200424002712.png"

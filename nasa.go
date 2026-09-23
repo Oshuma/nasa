@@ -1,7 +1,7 @@
 package nasa
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -50,12 +50,16 @@ func getContent(url string, p ParamEncoder) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	content, err := ioutil.ReadAll(resp.Body)
+	content, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return nil, &ErrorHTTPStatus{StatusCode: resp.StatusCode, Body: string(content)}
+	}
 
 	return content, nil
 }

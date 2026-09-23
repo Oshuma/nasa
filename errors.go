@@ -12,6 +12,9 @@ var (
 	// ErrorNoMetadata is returned if a media asset has no metadata.
 	ErrorNoMetadata = errors.New("media has no metadata")
 
+	// ErrorNoCaptions is returned if a media asset has no captions.
+	ErrorNoCaptions = errors.New("media has no captions")
+
 	// ErrorNoQuery is returned if there are no search parameters provided.
 	ErrorNoQuery = errors.New("must provide at least one search parameter")
 
@@ -27,4 +30,15 @@ type ErrorRoverCameraMissing struct {
 
 func (e *ErrorRoverCameraMissing) Error() string {
 	return fmt.Sprintf("rover %s does not have %s camera", e.rover.Name, e.camera.Name)
+}
+
+// ErrorHTTPStatus is returned when an API responds with a non-2xx status code. Body holds
+// the raw response body, which often contains the API's own error message.
+type ErrorHTTPStatus struct {
+	StatusCode int
+	Body       string
+}
+
+func (e *ErrorHTTPStatus) Error() string {
+	return fmt.Sprintf("unexpected HTTP status %d: %s", e.StatusCode, e.Body)
 }

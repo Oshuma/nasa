@@ -1,9 +1,5 @@
 package nasa
 
-const (
-	marsRoversAPIURL = "https://api.nasa.gov/mars-photos/api/v1/rovers"
-)
-
 // Rover represents a Mars rover. Use the predefined Rover* values when calling
 // MarsRoverPhotos or MarsMissionManifest to avoid constructing your own instance.
 type Rover struct {

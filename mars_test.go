@@ -37,3 +37,19 @@ func TestHasCamera(t *testing.T) {
 		}
 	})
 }
+
+func TestMarsParamsMismatch(t *testing.T) {
+	p := &APIParam{APIKey: "key"}
+
+	if _, err := MarsRoverPhotos(p, RoverCuriosity); err != ErrorParamsMismatch {
+		t.Errorf("MarsRoverPhotos: expected ErrorParamsMismatch, got: %v", err)
+	}
+
+	if _, err := MarsRoverPhotosLatest(p, RoverCuriosity); err != ErrorParamsMismatch {
+		t.Errorf("MarsRoverPhotosLatest: expected ErrorParamsMismatch, got: %v", err)
+	}
+
+	if _, err := MarsMissionManifest(p, RoverCuriosity); err != ErrorParamsMismatch {
+		t.Errorf("MarsMissionManifest: expected ErrorParamsMismatch, got: %v", err)
+	}
+}

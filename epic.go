@@ -3,6 +3,7 @@ package nasa
 import (
 	"encoding/json"
 	"fmt"
+	neturl "net/url"
 	"strings"
 )
 
@@ -133,7 +134,7 @@ func buildEPICArchiveURL(p *EPICParams, date EPICDate, collection, imageType, im
 	)
 
 	if p != nil && p.APIKey != "" {
-		return fmt.Sprintf("%s?api_key=%s", base, p.APIKey)
+		return base + "?" + neturl.Values{"api_key": {p.APIKey}}.Encode()
 	}
 
 	return base

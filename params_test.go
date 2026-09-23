@@ -170,6 +170,20 @@ func TestEncode(t *testing.T) {
 			}
 		})
 
+		t.Run("escapes API key", func(t *testing.T) {
+			p := &EPICParams{APIKey: "a&b=c"}
+
+			out, err := p.Encode()
+			if err != nil {
+				t.Error(err)
+			}
+
+			expected := "api/natural?api_key=a%26b%3Dc"
+			if out != expected {
+				t.Errorf("expected: %s, got: %s", expected, out)
+			}
+		})
+
 		t.Run("custom collection", func(t *testing.T) {
 			p := &EPICParams{Collection: "enhanced"}
 
