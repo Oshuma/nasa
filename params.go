@@ -107,12 +107,12 @@ func (p *EPICParams) Encode() (string, error) {
 	return path + "?" + url.Values{"api_key": {p.APIKey}}.Encode(), nil
 }
 
-// MarsPhotosParams wraps the Mars Photos API params. Use it with MarsRoverPhotos or
-// MarsRoverPhotosLatest to supply an API key, sol/earth date, camera, and pagination.
-//
-// Deprecated: The upstream Mars Rover Photos API was retired on October 8, 2025 and every endpoint
-// now returns HTTP 404. See https://github.com/corincerami/mars-photo-api.
+// MarsPhotosParams wraps the Mars photo filters. Use it with MarsRoverPhotos or
+// MarsRoverPhotosLatest to supply a sol or earth date, camera, and page.
 type MarsPhotosParams struct {
+	// APIKey is not used: NASA's raw image feeds do not require one.
+	//
+	// Deprecated: The Mars photo sources ignore it.
 	APIKey    string
 	Sol       int
 	EarthDate time.Time
@@ -124,10 +124,9 @@ type MarsPhotosParams struct {
 func (p *MarsPhotosParams) Encode() (string, error) {
 	v := url.Values{}
 
-	if p.APIKey == "" {
-		return "", ErrorNoAPIKey
+	if p.APIKey != "" {
+		v.Set("api_key", p.APIKey)
 	}
-	v.Set("api_key", p.APIKey)
 
 	if !p.EarthDate.IsZero() {
 		v.Set("earth_date", p.EarthDate.Format("2006-01-02"))

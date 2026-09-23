@@ -203,9 +203,14 @@ func TestEncode(t *testing.T) {
 		t.Run("no APIKey", func(t *testing.T) {
 			p := &MarsPhotosParams{}
 
-			_, err := p.Encode()
-			if err != ErrorNoAPIKey {
-				t.Errorf("wrong error returned: %s", err)
+			out, err := p.Encode()
+			if err != nil {
+				t.Error(err)
+			}
+
+			expected := "sol=0"
+			if out != expected {
+				t.Errorf("\nexpected: %s\ngot: %s", expected, out)
 			}
 		})
 

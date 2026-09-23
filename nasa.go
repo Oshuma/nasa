@@ -3,10 +3,11 @@ package nasa
 import (
 	"io"
 	"net/http"
+	"time"
 )
 
 // Version is the package version.
-const Version = "0.3.1"
+const Version = "0.4.0"
 
 // LatLon represents latitude/longitude coordinates as returned by several NASA
 // endpoints, including EPIC image metadata.
@@ -32,6 +33,10 @@ type XYZ struct {
 	Z float64 `json:"z"`
 }
 
+// httpClient is used for every API request. The timeout keeps a stalled server from
+// blocking callers forever.
+var httpClient = &http.Client{Timeout: 2 * time.Minute}
+
 func getContent(url string, p ParamEncoder) ([]byte, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -46,7 +51,7 @@ func getContent(url string, p ParamEncoder) ([]byte, error) {
 		req.URL.RawQuery = query
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

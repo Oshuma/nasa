@@ -13,7 +13,7 @@ Go package for [NASA Open APIs](https://api.nasa.gov/).
 - [ ] **Exoplanet**: Programmatic access to NASA's Exoplanet Archive database
 - [ ] **GeneLab**: Programmatic interface for GeneLab's public data repository website
 - [ ] **Insight**: Mars Weather Service API
-- [ ] ~~**Mars Rover Photos**~~: Retired upstream on October 8, 2025; the helpers remain but are deprecated
+- [x] **Mars Rover Photos**: Image data gathered by NASA's Curiosity, Opportunity, Spirit, and Perseverance rovers on Mars, fetched live from NASA's raw image feeds and the PDS Imaging Atlas
 - [x] **NASA Image and Video Library**: API to access the NASA Image and Video Library site at images.nasa.gov
 - [ ] **TechTransfer**: Patents, Software, and Tech Transfer Reports
 - [ ] **Satallite Situation Center**: System to cast geocentric spacecraft location information into a framework of (empirical) geophysical regions
@@ -100,15 +100,19 @@ for _, img := range images {
 
 Passing a `Date` retrieves imagery for a specific day; otherwise the helper returns the most recent image for the requested collection (natural or enhanced).
 
-### Mars Rover Photos (deprecated)
+### Mars Rover Photos
 
-> **Retired:** the upstream [Mars Rover Photos API](https://github.com/corincerami/mars-photo-api) was retired on October 8, 2025, and all of its endpoints now return HTTP 404. The helpers below are kept for compatibility but are deprecated and will be removed in a future release.
+The original [Mars Rover Photos API](https://github.com/corincerami/mars-photo-api) was retired on October 8, 2025. These helpers now fetch full-frame images on the fly, with no API key and no caching:
+
+- **Curiosity and Perseverance** come from NASA's raw image feeds, which update as new images arrive.
+- **Opportunity and Spirit** come from the [PDS Imaging Atlas](https://pds-imaging.jpl.nasa.gov/search/), NASA's archive of mission data. These are `ILF` products: full-frame images from the Front and Rear Hazcams, Navcam, Pancam and Microscopic Imager (`nasa.RoverCameraMI`), returned as 1024×1024 JPEGs. Pancam captured each scene through several color filters, so a scene appears as several grayscale images.
+
+> **Stability:** none of these sources is a documented public API. The raw image feeds (`mars.nasa.gov/api/v1/raw_image_items` for Curiosity and `mars.nasa.gov/rss/api` for Perseverance) power NASA's own raw image galleries, and the PDS search index (`pds-imaging.jpl.nasa.gov/solr/pds_archives/search`) powers the Imaging Atlas website. The full-size Opportunity and Spirit image URLs are derived from the archive's folder layout rather than returned by the index. Any of these may change or disappear without notice, which would break these helpers until the library is updated.
 
 ```go
 photos, err := nasa.MarsRoverPhotos(&nasa.MarsPhotosParams{
-	APIKey: os.Getenv("NASA_API_KEY"),
 	Sol:    1000,
-	Camera: nasa.RoverCameraMAST,
+	Camera: nasa.RoverCameraNAVCAM,
 	Page:   1,
 }, nasa.RoverCuriosity)
 if err != nil {
@@ -120,7 +124,12 @@ for _, photo := range photos.Photos {
 }
 ```
 
-Helpers such as `nasa.RoverCuriosity`, `nasa.RoverPerseverance`, and the predefined `RoverCamera*` constants ensure only valid camera selections are sent for a rover. Use `MarsRoverPhotosLatest` to fetch the latest sol for a rover.
+Helpers such as `nasa.RoverCuriosity`, `nasa.RoverPerseverance`, and the predefined `RoverCamera*` constants ensure only valid camera selections are sent for a rover.
+
+- Set `EarthDate` instead of `Sol` to get the photos captured on that UTC date.
+- `Page` returns 25 photos per page; leave it at 0 to get every matching photo. `photos.Total` holds the number of matches across all pages.
+- `MarsRoverPhotosLatest` returns the photos from the most recent sol that has full-frame images.
+- `MarsMissionManifest` returns a partial manifest: mission dates and status, `MaxSol`, `MaxDate` and `TotalPhotos`, but no per-sol `Photos` breakdown.
 
 ### NASA Image and Video Library
 

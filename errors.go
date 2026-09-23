@@ -20,6 +20,10 @@ var (
 
 	// ErrorParamsMismatch is returned when the wrong type of ParamEncoder is used.
 	ErrorParamsMismatch = errors.New("wrong param type passed")
+
+	// ErrorRoverUnsupported is returned when photos are requested for a rover that has no
+	// supported image source.
+	ErrorRoverUnsupported = errors.New("rover is not supported")
 )
 
 // ErrorRoverCameraMissing is returned if the rover does not have the camera available.

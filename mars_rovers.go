@@ -1,22 +1,27 @@
 package nasa
 
+import "time"
+
 // Rover represents a Mars rover. Use the predefined Rover* values when calling
 // MarsRoverPhotos or MarsMissionManifest to avoid constructing your own instance.
-//
-// Deprecated: The upstream Mars Rover Photos API was retired on October 8, 2025 and every endpoint
-// now returns HTTP 404. See https://github.com/corincerami/mars-photo-api.
 type Rover struct {
-	Name    string
-	Slug    string
-	Cameras []RoverCamera
+	Name        string
+	Slug        string
+	Cameras     []RoverCamera
+	LandingDate time.Time
+	LaunchDate  time.Time
+	Status      string
 }
 
 // Defines Rovers to be used in Mars rover API requests.
 var (
 	RoverCuriosity = Rover{
-		Name:    "Curiosity",
-		Slug:    "curiosity",
-		Cameras: []RoverCamera{RoverCameraFHAZ, RoverCameraRHAZ, RoverCameraMAST, RoverCameraCHEMCAM, RoverCameraMAHLI, RoverCameraMARDI, RoverCameraNAVCAM},
+		Name:        "Curiosity",
+		Slug:        "curiosity",
+		Cameras:     []RoverCamera{RoverCameraFHAZ, RoverCameraRHAZ, RoverCameraMAST, RoverCameraCHEMCAM, RoverCameraMAHLI, RoverCameraMARDI, RoverCameraNAVCAM},
+		LandingDate: time.Date(2012, 8, 6, 0, 0, 0, 0, time.UTC),
+		LaunchDate:  time.Date(2011, 11, 26, 0, 0, 0, 0, time.UTC),
+		Status:      "active",
 	}
 	RoverPerseverance = Rover{
 		Name: "Perseverance",
@@ -39,18 +44,26 @@ var (
 			RoverCameraSHERLOCWATSON,
 			RoverCameraSUPERCAMRMI,
 			RoverCameraLCAM,
-			RoverCameraMEDA,
 		},
+		LandingDate: time.Date(2021, 2, 18, 0, 0, 0, 0, time.UTC),
+		LaunchDate:  time.Date(2020, 7, 30, 0, 0, 0, 0, time.UTC),
+		Status:      "active",
 	}
 	RoverOpportunity = Rover{
-		Name:    "Opportunity",
-		Slug:    "opportunity",
-		Cameras: []RoverCamera{RoverCameraFHAZ, RoverCameraRHAZ, RoverCameraNAVCAM, RoverCameraPANCAM, RoverCameraMINITES},
+		Name:        "Opportunity",
+		Slug:        "opportunity",
+		Cameras:     []RoverCamera{RoverCameraFHAZ, RoverCameraRHAZ, RoverCameraNAVCAM, RoverCameraPANCAM, RoverCameraMI},
+		LandingDate: time.Date(2004, 1, 25, 0, 0, 0, 0, time.UTC),
+		LaunchDate:  time.Date(2003, 7, 7, 0, 0, 0, 0, time.UTC),
+		Status:      "complete",
 	}
 	RoverSpirit = Rover{
-		Name:    "Spirit",
-		Slug:    "spirit",
-		Cameras: []RoverCamera{RoverCameraFHAZ, RoverCameraRHAZ, RoverCameraNAVCAM, RoverCameraPANCAM, RoverCameraMINITES},
+		Name:        "Spirit",
+		Slug:        "spirit",
+		Cameras:     []RoverCamera{RoverCameraFHAZ, RoverCameraRHAZ, RoverCameraNAVCAM, RoverCameraPANCAM, RoverCameraMI},
+		LandingDate: time.Date(2004, 1, 4, 0, 0, 0, 0, time.UTC),
+		LaunchDate:  time.Date(2003, 6, 10, 0, 0, 0, 0, time.UTC),
+		Status:      "complete",
 	}
 
 	// Rovers is a convenience slice for iterating through every supported rover when
@@ -65,9 +78,6 @@ var (
 
 // RoverCamera represents a rover camera type. Refer to the exported RoverCamera*
 // variables for valid camera selections per rover.
-//
-// Deprecated: The upstream Mars Rover Photos API was retired on October 8, 2025 and every endpoint
-// now returns HTTP 404. See https://github.com/corincerami/mars-photo-api.
 type RoverCamera struct {
 	Name     string
 	FullName string
@@ -131,11 +141,11 @@ var (
 		Slug:     "pancam",
 	}
 
-	// RoverCameraMINITES is the Miniature Thermal Emission Spectrometer (Mini-TES).
-	RoverCameraMINITES = RoverCamera{
-		Name:     "MINITES",
-		FullName: "Miniature Thermal Emission Spectrometer (Mini-TES)",
-		Slug:     "minites",
+	// RoverCameraMI is the Microscopic Imager.
+	RoverCameraMI = RoverCamera{
+		Name:     "MI",
+		FullName: "Microscopic Imager",
+		Slug:     "mi",
 	}
 
 	// RoverCameraEDLRUCAM is the Entry, Descent, and Landing Rover Up-Look Camera.
@@ -257,13 +267,6 @@ var (
 		Slug:     "lcam",
 	}
 
-	// RoverCameraMEDA is the Mars Environmental Dynamics Analyzer.
-	RoverCameraMEDA = RoverCamera{
-		Name:     "MEDA",
-		FullName: "Mars Environmental Dynamics Analyzer",
-		Slug:     "meda",
-	}
-
 	// RoverCameras is an easily iteratable array of cameras.
 	RoverCameras = []RoverCamera{
 		RoverCameraFHAZ,
@@ -274,7 +277,7 @@ var (
 		RoverCameraMARDI,
 		RoverCameraNAVCAM,
 		RoverCameraPANCAM,
-		RoverCameraMINITES,
+		RoverCameraMI,
 		RoverCameraEDLRUCAM,
 		RoverCameraEDLRDCAM,
 		RoverCameraEDLDDCAM,
@@ -292,6 +295,5 @@ var (
 		RoverCameraSHERLOCWATSON,
 		RoverCameraSUPERCAMRMI,
 		RoverCameraLCAM,
-		RoverCameraMEDA,
 	}
 )
