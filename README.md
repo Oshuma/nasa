@@ -13,7 +13,7 @@ Go package for [NASA Open APIs](https://api.nasa.gov/).
 - [ ] **Exoplanet**: Programmatic access to NASA's Exoplanet Archive database
 - [ ] **GeneLab**: Programmatic interface for GeneLab's public data repository website
 - [ ] **Insight**: Mars Weather Service API
-- [x] **Mars Rover Photos**: Image data gathered by NASA's Curiosity, Opportunity, Spirit, and Perseverance rovers on Mars
+- [ ] ~~**Mars Rover Photos**~~: Retired upstream on October 8, 2025; the helpers remain but are deprecated
 - [x] **NASA Image and Video Library**: API to access the NASA Image and Video Library site at images.nasa.gov
 - [ ] **TechTransfer**: Patents, Software, and Tech Transfer Reports
 - [ ] **Satallite Situation Center**: System to cast geocentric spacecraft location information into a framework of (empirical) geophysical regions
@@ -100,7 +100,9 @@ for _, img := range images {
 
 Passing a `Date` retrieves imagery for a specific day; otherwise the helper returns the most recent image for the requested collection (natural or enhanced).
 
-### Mars Rover Photos
+### Mars Rover Photos (deprecated)
+
+> **Retired:** the upstream [Mars Rover Photos API](https://github.com/corincerami/mars-photo-api) was retired on October 8, 2025, and all of its endpoints now return HTTP 404. The helpers below are kept for compatibility but are deprecated and will be removed in a future release.
 
 ```go
 photos, err := nasa.MarsRoverPhotos(&nasa.MarsPhotosParams{

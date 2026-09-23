@@ -49,6 +49,9 @@ type RoverPhotos struct {
 
 // MarsRoverPhotos returns photos for the given MarsPhotosParams and Rover. The helper
 // validates that requested cameras exist on the rover before calling the official API.
+//
+// Deprecated: The upstream Mars Rover Photos API was retired on October 8, 2025 and every endpoint
+// now returns HTTP 404. See https://github.com/corincerami/mars-photo-api.
 func MarsRoverPhotos(p ParamEncoder, rover Rover) (RoverPhotos, error) {
 	params, ok := p.(*MarsPhotosParams)
 	if !ok {
@@ -89,6 +92,9 @@ type latestPhotosResponse struct {
 
 // MarsRoverPhotosLatest returns the most recent sol for which photos exist for the
 // specified rover. Supply MarsPhotosParams to control API key usage or filters.
+//
+// Deprecated: The upstream Mars Rover Photos API was retired on October 8, 2025 and every endpoint
+// now returns HTTP 404. See https://github.com/corincerami/mars-photo-api.
 func MarsRoverPhotosLatest(p ParamEncoder, rover Rover) ([]*RoverPhoto, error) {
 	if _, ok := p.(*MarsPhotosParams); !ok {
 		return []*RoverPhoto{}, ErrorParamsMismatch
@@ -136,6 +142,9 @@ type manifestResponse struct {
 
 // MarsMissionManifest returns the rover mission details from the manifests endpoint for
 // the provided rover and MarsPhotosParams.
+//
+// Deprecated: The upstream Mars Rover Photos API was retired on October 8, 2025 and every endpoint
+// now returns HTTP 404. See https://github.com/corincerami/mars-photo-api.
 func MarsMissionManifest(p ParamEncoder, rover Rover) (MissionManifest, error) {
 	if _, ok := p.(*MarsPhotosParams); !ok {
 		return MissionManifest{}, ErrorParamsMismatch

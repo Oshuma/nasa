@@ -109,6 +109,9 @@ func (p *EPICParams) Encode() (string, error) {
 
 // MarsPhotosParams wraps the Mars Photos API params. Use it with MarsRoverPhotos or
 // MarsRoverPhotosLatest to supply an API key, sol/earth date, camera, and pagination.
+//
+// Deprecated: The upstream Mars Rover Photos API was retired on October 8, 2025 and every endpoint
+// now returns HTTP 404. See https://github.com/corincerami/mars-photo-api.
 type MarsPhotosParams struct {
 	APIKey    string
 	Sol       int

@@ -2,6 +2,9 @@ package nasa
 
 // Rover represents a Mars rover. Use the predefined Rover* values when calling
 // MarsRoverPhotos or MarsMissionManifest to avoid constructing your own instance.
+//
+// Deprecated: The upstream Mars Rover Photos API was retired on October 8, 2025 and every endpoint
+// now returns HTTP 404. See https://github.com/corincerami/mars-photo-api.
 type Rover struct {
 	Name    string
 	Slug    string
@@ -62,6 +65,9 @@ var (
 
 // RoverCamera represents a rover camera type. Refer to the exported RoverCamera*
 // variables for valid camera selections per rover.
+//
+// Deprecated: The upstream Mars Rover Photos API was retired on October 8, 2025 and every endpoint
+// now returns HTTP 404. See https://github.com/corincerami/mars-photo-api.
 type RoverCamera struct {
 	Name     string
 	FullName string
