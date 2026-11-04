@@ -31,19 +31,30 @@ func (p *APIParam) Encode() (string, error) {
 	return v.Encode(), nil
 }
 
-// APODParams wraps the APOD API params used by APOD and APODList. Populate APIKey and any
-// optional filters such as Date or StartDate/EndDate.
+// APODParams wraps the APOD filters used by APOD and APODList, such as Date or
+// StartDate/EndDate.
 type APODParams struct {
-	APIKey    string
-	Date      time.Time
-	HD        bool
+	// Deprecated: The APOD feed does not require an API key; it is ignored.
+	APIKey string
+
+	Date time.Time
+
+	// Deprecated: HDURL is always populated when available; HD is ignored.
+	HD bool
+
 	StartDate time.Time
 	EndDate   time.Time
-	Count     int
-	Thumbs    bool
+
+	// Count returns this many random images, fetched one date at a time.
+	Count int
+
+	// Thumbs sets APODImage.ThumbnailURL for YouTube videos.
+	Thumbs bool
 }
 
-// Encode returns a string representation for the given API type.
+// Encode returns the query string for the retired api.nasa.gov APOD service.
+//
+// Deprecated: APOD and APODList no longer use it.
 func (p *APODParams) Encode() (string, error) {
 	v := url.Values{}
 

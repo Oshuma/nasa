@@ -51,8 +51,7 @@ import (
 
 ```go
 apod, err := nasa.APOD(&nasa.APODParams{
-	APIKey: os.Getenv("NASA_API_KEY"),
-	Date:   time.Now(),
+	Date: time.Now(),
 })
 if err != nil {
 	log.Fatal(err)
@@ -62,11 +61,12 @@ fmt.Printf("%s: %s\n", apod.Date.Format("2006-01-02"), apod.Title)
 fmt.Printf("Media: %s\n", apod.URL)
 ```
 
+APOD data comes from NASA's [APOD WordPress feed](https://science.nasa.gov/wp-json/wp/v2/apod-basic), which needs no API key. See [APOD_MIGRATION.md](APOD_MIGRATION.md) for planned changes to the APOD response.
+
 If you need more than one image (for example, a date range) use `APODList`:
 
 ```go
 items, err := nasa.APODList(&nasa.APODParams{
-	APIKey:    os.Getenv("NASA_API_KEY"),
 	StartDate: time.Now().AddDate(0, 0, -3),
 	EndDate:   time.Now(),
 	Thumbs:    true,

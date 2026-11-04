@@ -21,6 +21,9 @@ var (
 	// ErrorParamsMismatch is returned when the wrong type of ParamEncoder is used.
 	ErrorParamsMismatch = errors.New("wrong param type passed")
 
+	// ErrorNoResults is returned when a query that must return items finds none.
+	ErrorNoResults = errors.New("no results found")
+
 	// ErrorRoverUnsupported is returned when photos are requested for a rover that has no
 	// supported image source.
 	ErrorRoverUnsupported = errors.New("rover is not supported")

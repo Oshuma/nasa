@@ -38,33 +38,39 @@ type XYZ struct {
 var httpClient = &http.Client{Timeout: 2 * time.Minute}
 
 func getContent(url string, p ParamEncoder) ([]byte, error) {
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
 	if p != nil {
 		query, err := p.Encode()
 		if err != nil {
 			return nil, err
 		}
-		req.URL.RawQuery = query
+		url += "?" + query
+	}
+
+	content, _, err := getResponse(url)
+	return content, err
+}
+
+// getResponse fetches url and returns the body along with the response headers.
+func getResponse(url string) ([]byte, http.Header, error) {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	defer resp.Body.Close()
 
 	content, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return nil, &ErrorHTTPStatus{StatusCode: resp.StatusCode, Body: string(content)}
+		return nil, nil, &ErrorHTTPStatus{StatusCode: resp.StatusCode, Body: string(content)}
 	}
 
-	return content, nil
+	return content, resp.Header, nil
 }
