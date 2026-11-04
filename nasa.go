@@ -7,7 +7,7 @@ import (
 )
 
 // Version is the package version.
-const Version = "0.4.0"
+const Version = "0.4.1"
 
 // LatLon represents latitude/longitude coordinates as returned by several NASA
 // endpoints, including EPIC image metadata.
